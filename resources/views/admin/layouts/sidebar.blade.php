@@ -85,8 +85,6 @@
                          </p>
                      </a>
                  </li>
-
-                 <li class="nav-header">ORDERS</li>
                  <li class="nav-item">
                      <a href="{{ URL('admin/order') }}" class="nav-link">
                          <i class="nav-icon fas fa-box"></i>
@@ -95,8 +93,6 @@
                          </p>
                      </a>
                  </li>
-
-                 <li class="nav-header">TRANSACTIONS</li>
                  <li class="nav-item">
                      <a href="{{ URL('admin/transaction') }}" class="nav-link">
                          <i class="nav-icon fas fa-money-bill"></i>

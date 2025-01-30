@@ -49,4 +49,4 @@ Route::name('admin.')
         // Homepage Routes
     });
 
-Route::get('/', 'App\Http\Controllers\PageController@index')->name('index');
+Route::get('/', 'App\Http\Controllers\PageController@index')->name('homepage');

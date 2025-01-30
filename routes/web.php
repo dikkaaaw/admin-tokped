@@ -45,4 +45,8 @@ Route::name('admin.')
             Route::post('/{transaction}/status', 'TransactionController@updateStatus')->name('transaction.status');
             Route::post('/{transaction}', 'TransactionController@proccessedit')->name('transaction.update');
         });
+
+        // Homepage Routes
     });
+
+Route::get('/', 'App\Http\Controllers\PageController@index')->name('index');

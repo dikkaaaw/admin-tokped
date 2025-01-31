@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('image')->nullable();
             $table->string('category');
-            $table->integer('quantity');
+            $table->integer('stock');
             $table->integer('price');
             $table->timestamps();
         });
@@ -35,6 +35,7 @@ return new class extends Migration {
             $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
             $table->foreignId('id_product')->constrained('products')->onDelete('cascade');
             $table->boolean('is_checkout')->default(false);
+            $table->integer('quantity');
             $table->timestamps();
         });
 

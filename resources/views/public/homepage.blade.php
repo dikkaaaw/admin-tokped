@@ -252,15 +252,15 @@
                 <div class="col-md-12">
                     <div class="bootstrap-tabs product-tabs">
                         <div class="my-5 tabs-header d-flex justify-content-between border-bottom">
-                            <h3>Trending Products</h3>
+                            <h3>Products</h3>
                             <nav>
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                     <a href="#" class="nav-link text-uppercase fs-6 active" id="nav-all-tab"
                                         data-bs-toggle="tab" data-bs-target="#nav-all">All</a>
-                                    <a href="#" class="nav-link text-uppercase fs-6" id="nav-fruits-tab"
+                                    {{-- <a href="#" class="nav-link text-uppercase fs-6" id="nav-fruits-tab"
                                         data-bs-toggle="tab" data-bs-target="#nav-fruits">Fruits & Veges</a>
                                     <a href="#" class="nav-link text-uppercase fs-6" id="nav-juices-tab"
-                                        data-bs-toggle="tab" data-bs-target="#nav-juices">Juices</a>
+                                        data-bs-toggle="tab" data-bs-target="#nav-juices">Juices</a> --}}
                                 </div>
                             </nav>
                         </div>
@@ -272,14 +272,14 @@
                                     @foreach ($products as $product)
                                         <div class="col">
                                             <div class="product-item">
-                                                <span class="m-3 badge bg-success position-absolute">-30%</span>
-                                                <a href="#" class="btn-wishlist"><svg width="24"
+                                                {{-- <span class="m-3 badge bg-success position-absolute">-30%</span> --}}
+                                                {{-- <a href="#" class="btn-wishlist"><svg width="24"
                                                         height="24">
                                                         <use xlink:href="#heart"></use>
-                                                    </svg></a>
+                                                    </svg></a> --}}
                                                 <figure>
                                                     <a href="index.html" title="Product Title">
-                                                        <img src="{{ asset('dist/assets/img/thumb-biscuits.png') }}"
+                                                        <img src="{{ asset('dist/assets/img/buah/' . $product->image) }}"
                                                             class="tab-image" />
                                                     </a>
                                                 </figure>
@@ -290,7 +290,8 @@
                                                         <use xlink:href="#star-solid"></use>
                                                     </svg>
                                                     4.5</span>
-                                                <span class="price">Rp. {{ $product['price'] }}</span>
+                                                <span class="price">
+                                                    {{ 'Rp. ' . number_format($product['price'], 0, ',', '.') }}</span>
                                                 <div class="d-flex align-items-center justify-content-between">
                                                     <div class="input-group product-qty">
                                                         <span class="input-group-btn">
@@ -302,8 +303,9 @@
                                                                 </svg>
                                                             </button>
                                                         </span>
-                                                        <input type="text" id="quantity" name="quantity"
-                                                            class="form-control input-number" value="1" />
+                                                        <input type="text" id="quantity_{{ $product['id'] }}"
+                                                            name="quantity" class="form-control input-number"
+                                                            value="1" data-product-id="{{ $product['id'] }}" />
                                                         <span class="input-group-btn">
                                                             <button type="button"
                                                                 class="quantity-right-plus btn btn-success btn-number"
@@ -314,8 +316,26 @@
                                                             </button>
                                                         </span>
                                                     </div>
-                                                    <a href="#" class="nav-link">Add to Cart
-                                                        <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
+
+                                                    <form action="{{ route('cart.store') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="id"
+                                                            value="{{ $product['id'] }}">
+                                                        <input type="hidden" name="name"
+                                                            value="{{ $product['name'] }}">
+                                                        <input type="hidden" name="price"
+                                                            value="{{ $product['price'] }}">
+                                                        <input type="hidden" name="category"
+                                                            value="{{ $product['category'] }}">
+                                                        <input type="hidden" name="quantity" value="1"
+                                                            id="hidden-quantity_{{ $product['id'] }}"
+                                                            class="hidden-quantity">
+                                                        <button type="submit" class="nav-link">
+                                                            Add to Cart
+                                                            <iconify-icon icon="uil:shopping-cart"></iconify-icon>
+                                                        </button>
+                                                    </form>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -510,4 +530,55 @@
             </div>
         </div>
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tombol tambah
+            document.querySelectorAll('.quantity-right-plus').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var input = this.closest('.input-group').querySelector('.input-number');
+                    var value = parseInt(input.value);
+                    input.value = value + 1;
+
+                    // Update hidden input sesuai dengan produk
+                    var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset
+                        .productId);
+                    if (hiddenInput) {
+                        hiddenInput.value = input.value;
+                    }
+                });
+            });
+
+            // Tombol kurang
+            document.querySelectorAll('.quantity-left-minus').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var input = this.closest('.input-group').querySelector('.input-number');
+                    var value = parseInt(input.value);
+
+                    // Pastikan tidak bisa kurang dari 1
+                    if (value > 1) {
+                        input.value = value - 1;
+                    }
+
+                    // Update hidden input sesuai dengan produk
+                    var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset
+                        .productId);
+                    if (hiddenInput) {
+                        hiddenInput.value = input.value;
+                    }
+                });
+            });
+
+            // Handle perubahan input langsung
+            document.querySelectorAll('.input-number').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    var hiddenInput = document.getElementById('hidden-quantity_' + this.dataset
+                        .productId);
+                    if (hiddenInput) {
+                        hiddenInput.value = this.value;
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

@@ -7,38 +7,33 @@
         <div class="order-md-last">
             <h4 class="mb-3 d-flex justify-content-between align-items-center">
                 <span class="text-primary">Your cart</span>
-                <span class="badge bg-primary rounded-pill">3</span>
+                <span class="badge bg-primary rounded-pill">{{ $totalQuantity }} </span>
             </h4>
             <ul class="mb-3 list-group">
-                <li class="list-group-item d-flex justify-content-between lh-sm">
-                    <div>
-                        <h6 class="my-0">Growers cider</h6>
-                        <small class="text-body-secondary">Brief description</small>
-                    </div>
-                    <span class="text-body-secondary">$12</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between lh-sm">
-                    <div>
-                        <h6 class="my-0">Fresh grapes</h6>
-                        <small class="text-body-secondary">Brief description</small>
-                    </div>
-                    <span class="text-body-secondary">$8</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between lh-sm">
-                    <div>
-                        <h6 class="my-0">Heinz tomato ketchup</h6>
-                        <small class="text-body-secondary">Brief description</small>
-                    </div>
-                    <span class="text-body-secondary">$5</span>
-                </li>
+                @foreach ($dataOrder as $order)
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">{{ $order->product_name }}</h6>
+                            <small class="text-body-secondary">X {{ $order->quantity }}</small>
+                        </div>
+                        <span
+                            class="text-body-secondary">{{ 'Rp. ' . number_format($order->total_price, 0, ',', '.') }}</span>
+                    </li>
+                @endforeach
+
                 <li class="list-group-item d-flex justify-content-between">
-                    <span>Total (USD)</span>
-                    <strong>$20</strong>
+                    <span>Total (Rupiah)</span>
+                    <strong>{{ number_format($totalPrice, 0, ',', '.') }}</strong>
                 </li>
             </ul>
-            <button class="w-100 btn btn-primary btn-lg" type="submit">
-                Continue to checkout
-            </button>
+            <form action="{{ route('cart.update') }}" method="POST">
+                @csrf
+                <input type="hidden" name="dataOrder" value="{{ $dataOrder }}">
+                <button class="w-100 btn btn-primary btn-lg" type="submit">
+                    Checkout
+                </button>
+            </form>
+
         </div>
     </div>
 </div>
@@ -131,7 +126,8 @@
                     <button class="gap-2 bg-transparent border-0 d-flex flex-column lh-1" type="button"
                         data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
                         <span class="fs-6 text-muted dropdown-toggle">Your Cart</span>
-                        <span class="cart-total fs-5 fw-bold">$1290.00</span>
+                        <span
+                            class="cart-total fs-5 fw-bold">{{ 'Rp. ' . number_format($totalPrice, 0, ',', '.') }}</span>
                     </button>
                 </div>
             </div>

@@ -50,3 +50,5 @@ Route::name('admin.')
     });
 
 Route::get('/', 'App\Http\Controllers\PageController@index')->name('homepage');
+Route::post('/cart/store', 'App\Http\Controllers\PageController@storeToCart')->name('cart.store');
+Route::post('/cart/update', 'App\Http\Controllers\PageController@update')->name('cart.update');

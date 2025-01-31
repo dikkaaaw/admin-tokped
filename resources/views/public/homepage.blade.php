@@ -26,66 +26,13 @@
                 <div class="col-md-12">
                     <div class="category-carousel swiper">
                         <div class="swiper-wrapper">
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-bread-baguette.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Breads & Sweets</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-soft-drinks-bottle.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-wine-glass-bottle.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-animal-products-drumsticks.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-bread-herb-flour.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
-                            <a href="index.html" class="nav-link category-item swiper-slide">
-                                <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
-                                    alt="Category Thumbnail" />
-                                <h3 class="category-title">Fruits & Veges</h3>
-                            </a>
+                            @foreach ($products->groupBy('category')->take(6) as $category => $items)
+                                <a href="#" class="nav-link category-item swiper-slide">
+                                    <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
+                                        alt="{{ $category }}" />
+                                    <h3 class="category-title">{{ $category }}</h3>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -118,126 +65,33 @@
                 <div class="col-md-12">
                     <div class="brand-carousel swiper">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <div class="p-3 mb-3 border-0 shadow card rounded-4">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="{{ asset('dist/assets/img/product-thumb-11.jpg') }}"
-                                                class="rounded img-fluid" alt="Card title" />
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="py-0 card-body">
-                                                <p class="mb-0 text-muted">
-                                                    Amber Jar
-                                                </p>
-                                                <h5 class="card-title">
-                                                    Honey best nectar you wish to get
-                                                </h5>
+                            @foreach ($products->sortByDesc('created_at')->take(6) as $product)
+                                <div class="swiper-slide">
+                                    <div class="p-3 mb-3 border-0 shadow card rounded-4">
+                                        <div class="row g-0">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <img src="{{ asset('dist/assets/img/buah/' . $product->image) }}"
+                                                    class="rounded img-fluid"
+                                                    style="width: 100%; height: 100px; object-fit: cover;"
+                                                    alt="{{ $product->name }}" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="py-0 card-body">
+                                                    <p class="mb-0 text-muted">
+                                                        {{ $product->category }}
+                                                    </p>
+                                                    <h5 class="card-title">
+                                                        {{ $product->name }}
+                                                    </h5>
+                                                    <p class="mb-0 text-primary">
+                                                        {{ 'Rp. ' . number_format($product->price, 0, ',', '.') }}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="p-3 mb-3 border-0 shadow card rounded-4">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="{{ asset('dist/assets/img/product-thumb-12.jpg') }}"
-                                                class="rounded img-fluid" alt="Card title" />
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="py-0 card-body">
-                                                <p class="mb-0 text-muted">
-                                                    Amber Jar
-                                                </p>
-                                                <h5 class="card-title">
-                                                    Honey best nectar you wish to get
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="p-3 mb-3 border-0 shadow card rounded-4">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="{{ asset('dist/assets/img/product-thumb-13.jpg') }}"
-                                                class="rounded img-fluid" alt="Card title" />
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="py-0 card-body">
-                                                <p class="mb-0 text-muted">
-                                                    Amber Jar
-                                                </p>
-                                                <h5 class="card-title">
-                                                    Honey best nectar you wish to get
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="p-3 mb-3 border-0 shadow card rounded-4">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="{{ asset('dist/assets/img/product-thumb-14.jpg') }}"
-                                                class="rounded img-fluid" alt="Card title" />
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="py-0 card-body">
-                                                <p class="mb-0 text-muted">
-                                                    Amber Jar
-                                                </p>
-                                                <h5 class="card-title">
-                                                    Honey best nectar you wish to get
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="p-3 mb-3 border-0 shadow card rounded-4">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="{{ asset('dist/assets/img/product-thumb-11.jpg') }}"
-                                                class="rounded img-fluid" alt="Card title" />
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="py-0 card-body">
-                                                <p class="mb-0 text-muted">
-                                                    Amber Jar
-                                                </p>
-                                                <h5 class="card-title">
-                                                    Honey best nectar you wish to get
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="p-3 mb-3 border-0 shadow card rounded-4">
-                                    <div class="row g-0">
-                                        <div class="col-md-4">
-                                            <img src="{{ asset('dist/assets/img/product-thumb-12.jpg') }}"
-                                                class="rounded img-fluid" alt="Card title" />
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="py-0 card-body">
-                                                <p class="mb-0 text-muted">
-                                                    Amber Jar
-                                                </p>
-                                                <h5 class="card-title">
-                                                    Honey best nectar you wish to get
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -268,131 +122,85 @@
                             <div class="tab-pane fade show active" id="nav-all" role="tabpanel"
                                 aria-labelledby="nav-all-tab">
                                 <div
-                                    class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
+                                    class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
                                     @foreach ($products as $product)
                                         <div class="col">
-                                            <div class="product-item">
-                                                {{-- <span class="m-3 badge bg-success position-absolute">-30%</span> --}}
-                                                {{-- <a href="#" class="btn-wishlist"><svg width="24"
-                                                        height="24">
-                                                        <use xlink:href="#heart"></use>
-                                                    </svg></a> --}}
-                                                <figure>
-                                                    <a href="index.html" title="Product Title">
-                                                        <img src="{{ asset('dist/assets/img/buah/' . $product->image) }}"
-                                                            class="tab-image" />
-                                                    </a>
-                                                </figure>
-                                                <h3>{{ $product['name'] }}</h3>
-                                                <span class="qty">{{ $product['quantity'] }} Unit</span><span
-                                                    class="rating"><svg width="24" height="24"
-                                                        class="text-primary">
-                                                        <use xlink:href="#star-solid"></use>
-                                                    </svg>
-                                                    4.5</span>
-                                                <span class="price">
-                                                    {{ 'Rp. ' . number_format($product['price'], 0, ',', '.') }}</span>
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <div class="input-group product-qty">
-                                                        <span class="input-group-btn">
-                                                            <button type="button"
-                                                                class="quantity-left-minus btn btn-danger btn-number"
-                                                                data-type="minus">
-                                                                <svg width="16" height="16">
-                                                                    <use xlink:href="#minus"></use>
-                                                                </svg>
-                                                            </button>
+                                            <div class="border-0 shadow-sm card h-100 product-card rounded-3">
+                                                <div class="position-relative">
+                                                    <img src="{{ asset('dist/assets/img/buah/' . $product->image) }}"
+                                                        class="p-3 card-img-top rounded-top"
+                                                        style="height: 200px; object-fit: contain"
+                                                        alt="{{ $product->name }}">
+
+                                                    @if ($product->quantity < 5)
+                                                        <span
+                                                            class="top-0 m-3 bg-danger badge rounded-pill text-dark position-absolute end-0">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i>Low Stock
                                                         </span>
-                                                        <input type="text" id="quantity_{{ $product['id'] }}"
-                                                            name="quantity" class="form-control input-number"
-                                                            value="1" data-product-id="{{ $product['id'] }}" />
-                                                        <span class="input-group-btn">
-                                                            <button type="button"
-                                                                class="quantity-right-plus btn btn-success btn-number"
-                                                                data-type="plus">
-                                                                <svg width="16" height="16">
-                                                                    <use xlink:href="#plus"></use>
-                                                                </svg>
-                                                            </button>
-                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                <div class="card-body d-flex flex-column">
+                                                    <h5 class="mb-1 card-title">{{ $product->name }}</h5>
+                                                    <p class="mb-2 text-muted small">Stock: {{ $product->stock }} pcs
+                                                    </p>
+
+                                                    <div class="mb-3">
+                                                        <span class="text-muted d-flex align-items-center small">4.5<svg
+                                                                width="24" height="24" class="text-primary">
+                                                                <use xlink:href="#star-solid"></use>
+                                                            </svg></span>
                                                     </div>
 
-                                                    <form action="{{ route('cart.store') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="id"
-                                                            value="{{ $product['id'] }}">
-                                                        <input type="hidden" name="name"
-                                                            value="{{ $product['name'] }}">
-                                                        <input type="hidden" name="price"
-                                                            value="{{ $product['price'] }}">
-                                                        <input type="hidden" name="category"
-                                                            value="{{ $product['category'] }}">
-                                                        <input type="hidden" name="quantity" value="1"
-                                                            id="hidden-quantity_{{ $product['id'] }}"
-                                                            class="hidden-quantity">
-                                                        <button type="submit" class="nav-link">
-                                                            Add to Cart
-                                                            <iconify-icon icon="uil:shopping-cart"></iconify-icon>
-                                                        </button>
-                                                    </form>
+                                                    <h4 class="mb-3 text-primary">
+                                                        {{ 'Rp. ' . number_format($product->price, 0, ',', '.') }}</h4>
 
+                                                    <div class="mt-auto">
+                                                        <div class="mb-3 input-group">
+                                                            <button class="btn btn-outline-secondary quantity-left-minus"
+                                                                type="button">
+                                                                <i class="fas fa-minus"></i>
+                                                            </button>
+                                                            <input type="number"
+                                                                class="text-center form-control input-number"
+                                                                id="quantity_{{ $product->id }}" value="1"
+                                                                min="1" data-product-id="{{ $product->id }}">
+                                                            <button class="btn btn-outline-secondary quantity-right-plus"
+                                                                type="button">
+                                                                <i class="fas fa-plus"></i>
+                                                            </button>
+                                                        </div>
+
+                                                        <form action="{{ route('cart.store') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="id"
+                                                                value="{{ $product->id }}">
+                                                            <input type="hidden" name="name"
+                                                                value="{{ $product->name }}">
+                                                            <input type="hidden" name="price"
+                                                                value="{{ $product->price }}">
+                                                            <input type="hidden" name="category"
+                                                                value="{{ $product->category }}">
+                                                            <input type="hidden" name="quantity" value="1"
+                                                                id="hidden-quantity_{{ $product->id }}"
+                                                                class="hidden-quantity">
+
+                                                            <button type="submit" class="btn btn-primary w-100">
+                                                                <i class="fas fa-shopping-cart me-2"></i>
+                                                                Add to Cart
+                                                            </button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @endforeach
-
-                                    <div class="col">
-                                        <div class="product-item">
-                                            <a href="#" class="btn-wishlist"><svg width="24" height="24">
-                                                    <use xlink:href="#heart"></use>
-                                                </svg></a>
-                                            <figure>
-                                                <a href="index.html" title="Product Title">
-                                                    <img src="{{ asset('dist/assets/img/thumb-milk.png') }}"
-                                                        class="tab-image" />
-                                                </a>
-                                            </figure>
-                                            <h3>Sunstar Fresh Melon Juice</h3>
-                                            <span class="qty">1 Unit</span><span class="rating"><svg width="24"
-                                                    height="24" class="text-primary">
-                                                    <use xlink:href="#star-solid"></use>
-                                                </svg>
-                                                4.5</span>
-                                            <span class="price">$18.00</span>
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="input-group product-qty">
-                                                    <span class="input-group-btn">
-                                                        <button type="button"
-                                                            class="quantity-left-minus btn btn-danger btn-number"
-                                                            data-type="minus">
-                                                            <svg width="16" height="16">
-                                                                <use xlink:href="#minus"></use>
-                                                            </svg>
-                                                        </button>
-                                                    </span>
-                                                    <input type="text" id="quantity" name="quantity"
-                                                        class="form-control input-number" value="1" />
-                                                    <span class="input-group-btn">
-                                                        <button type="button"
-                                                            class="quantity-right-plus btn btn-success btn-number"
-                                                            data-type="plus">
-                                                            <svg width="16" height="16">
-                                                                <use xlink:href="#plus"></use>
-                                                            </svg>
-                                                        </button>
-                                                    </span>
-                                                </div>
-                                                <a href="#" class="nav-link">Add to Cart
-                                                    <iconify-icon icon="uil:shopping-cart"></iconify-icon></a>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                                 <!-- / product-grid -->
                             </div>
 
                             <!-- Fruit & Veges -->
-                            <div class="tab-pane fade" id="nav-fruits" role="tabpanel" aria-labelledby="nav-fruits-tab">
+                            {{-- <div class="tab-pane fade" id="nav-fruits" role="tabpanel" aria-labelledby="nav-fruits-tab">
                                 <!-- Product Grids -->
                                 <div
                                     class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
@@ -405,7 +213,7 @@
                                 <div
                                     class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -414,11 +222,11 @@
     </section>
 
     <!-- Why Us -->
-    <section class="py-5">
+    <section class="py-5 why-us-section">
         <div class="container-fluid">
-            <div class="row row-cols-1 row-cols-sm-3 row-cols-lg-5">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                 <div class="col">
-                    <div class="mb-3 border-0 card">
+                    <div class="p-3 border-0 shadow-sm h-100 card">
                         <div class="row">
                             <div class="col-md-2 text-dark">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -440,7 +248,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="mb-3 border-0 card">
+                    <div class="p-3 border-0 shadow-sm h-100 card">
                         <div class="row">
                             <div class="col-md-2 text-dark">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -462,7 +270,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="mb-3 border-0 card">
+                    <div class="p-3 border-0 shadow-sm h-100 card">
                         <div class="row">
                             <div class="col-md-2 text-dark">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -484,7 +292,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="mb-3 border-0 card">
+                    <div class="p-3 border-0 shadow-sm h-100 card">
                         <div class="row">
                             <div class="col-md-2 text-dark">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
@@ -496,28 +304,6 @@
                             <div class="col-md-10">
                                 <div class="p-0 card-body">
                                     <h5>guaranteed savings</h5>
-                                    <p class="card-text">
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipi elit.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="mb-3 border-0 card">
-                        <div class="row">
-                            <div class="col-md-2 text-dark">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                    viewBox="0 0 24 24">
-                                    <path fill="currentColor"
-                                        d="M18 7h-.35A3.45 3.45 0 0 0 18 5.5a3.49 3.49 0 0 0-6-2.44A3.49 3.49 0 0 0 6 5.5A3.45 3.45 0 0 0 6.35 7H6a3 3 0 0 0-3 3v2a1 1 0 0 0 1 1h1v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-6h1a1 1 0 0 0 1-1v-2a3 3 0 0 0-3-3Zm-7 13H8a1 1 0 0 1-1-1v-6h4Zm0-9H5v-1a1 1 0 0 1 1-1h5Zm0-4H9.5A1.5 1.5 0 1 1 11 5.5Zm2-1.5A1.5 1.5 0 1 1 14.5 7H13ZM17 19a1 1 0 0 1-1 1h-3v-7h4Zm2-8h-6V9h5a1 1 0 0 1 1 1Z" />
-                                </svg>
-                            </div>
-                            <div class="col-md-10">
-                                <div class="p-0 card-body">
-                                    <h5>Daily offers</h5>
                                     <p class="card-text">
                                         Lorem ipsum dolor sit amet, consectetur
                                         adipi elit.

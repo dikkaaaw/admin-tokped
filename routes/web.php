@@ -2,9 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Login & Logout
-Route::post('login', 'App\Http\AuthController@login')->name('login');
-Route::get('/logout', 'App\Http\Controllers\AuthController@logout')->name('logout');
+// Login
+Route::get('login', 'App\Http\Controllers\AuthController@login_page')->name('login_page');
+Route::post('login', 'App\Http\Controllers\AuthController@login')->name('login');
+
+// Register
+Route::get('register', 'App\Http\Controllers\AuthController@register_page')->name('register_page');
+Route::post('register', 'App\Http\Controllers\AuthController@register')->name('register');
+
 
 Route::name('admin.')
     ->namespace('App\Http\Controllers\Admin')

@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 
 // Login
 Route::get('login', 'App\Http\Controllers\AuthController@login_page')->name('login_page');
+Route::post('logout', 'App\Http\Controllers\AuthController@logout')->name('logout');
 Route::post('login', 'App\Http\Controllers\AuthController@login')->name('login');
+Route::post('update-address', 'App\Http\Controllers\AuthController@updateAddress')->name('updateAddress');
 
 // Register
 Route::get('register', 'App\Http\Controllers\AuthController@register_page')->name('register_page');

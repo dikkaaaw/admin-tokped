@@ -127,9 +127,15 @@
 <body class="mx-4">
 
     @include('public.layouts.preloader')
-    @include('public.layouts.navbar')
+    @if (!request()->is('login', 'register'))
+        @include('public.layouts.navbar')
+    @endif
+
     @yield('content')
-    @include('public.layouts.footer')
+
+    @if (!request()->is('login', 'register'))
+        @include('public.layouts.footer')
+    @endif
 
     <!-- Jquery -->
     <script src="{{ asset('dist/js/jquery-1.11.0.min.js') }}"></script>

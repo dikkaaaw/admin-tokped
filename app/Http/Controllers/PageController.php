@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
@@ -79,7 +80,7 @@ class PageController extends Controller
 
         // Buat data order baru
         $order = Order::create([
-            'id_user' => 2,
+            'id_user' => Auth::id(),  // Sesuaikan dengan ID user yang sedang login
             'id_product' => $request->id,
             'is_checkout' => 0,
             'quantity' => $request->quantity,
@@ -92,7 +93,7 @@ class PageController extends Controller
     public function showCart()
     {
         // Ambil data order untuk user yang sedang login
-        $userId = 2;  // Atau sesuaikan dengan ID user yang sedang login
+        $userId = Auth::id();  // Atau sesuaikan dengan ID user yang sedang login
         $dataOrder = Order::where('id_user', $userId)
             ->get();  // Mengambil koleksi (Collection)
 
@@ -144,23 +145,56 @@ class PageController extends Controller
     // PUT/PATCH: Memperbarui data produk berdasarkan ID
     public function update(Request $request)
     {
-        // Mengambil dataOrder yang dikirimkan dalam bentuk JSON
-        $dataOrder = json_decode($request->input('dataOrder'), true); // Mengubah JSON menjadi array
+        // Mendapatkan dataOrder yang dikirimkan dari form sebagai JSON
+        $newDataOrder = json_decode($request->input('dataOrder'), true);  // Mengubah JSON menjadi array
+        $removedItems = json_decode($request->input('removedItems'), true); // Mendapatkan removedItems
+
+        if (!$newDataOrder) {
+            return redirect()->route('homepage')->withErrors('No changes in cart.'); // Menangani jika dataOrder kosong
+        }
 
         // Iterasi setiap order dalam dataOrder
-        foreach ($dataOrder as $order) {
+        foreach ($newDataOrder as $newOrder) {
             // Ambil order berdasarkan id dari request
-            $order = Order::where('id', $order['id'])
+            $oldOrder = Order::where('id', $newOrder['id'])
                 ->where('is_checkout', 0)  // Pastikan hanya yang is_checkout = 0
                 ->first();
 
-            // Jika order ditemukan, ubah is_checkout menjadi 1
-            if ($order) {
-                $order->is_checkout = 1;
-                $order->save();  // Simpan perubahan
+            // Jika order ditemukan, lakukan update
+            if ($oldOrder) {
+                // Update kuantitas jika ada
+                if (isset($newOrder['quantity']) && $oldOrder->quantity !== $newOrder['quantity']) {
+                    $oldOrder->quantity = $newOrder['quantity'];  // Menggunakan $newOrder untuk update quantity
+                }
+
+                // Simpan message (note) untuk order yang sudah diperbarui
+                if ($note = $request->input('note')) {
+                    // Simpan note pada semua item yang sama
+                    OrderMessage::create([
+                        'id_order' => $oldOrder->id,
+                        'message' => $note  // Menyimpan note yang diterapkan
+                    ]);
+                }
+
+                // Update is_checkout menjadi 1, jika kuantitas sudah diproses
+                $oldOrder->is_checkout = 1;
+                $oldOrder->save();  // Simpan perubahan yang ada
+
+                // Jika kuantitas 0, hapus order dari keranjang
+                if ($oldOrder->quantity <= 0) {
+                    $oldOrder->delete();
+                }
             }
         }
 
+        // Hapus produk yang ada di removedItems
+        foreach ($removedItems as $removedItemId) {
+            $removedOrder = Order::where('id', $removedItemId)->first();
+            if ($removedOrder) {
+                $removedOrder->delete();
+            }
+        }
+        
         // Kembalikan respons yang sesuai
         return redirect()->route('homepage');
     }

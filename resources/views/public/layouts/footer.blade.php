@@ -4,7 +4,7 @@
          <div class="row">
              <div class="col-lg-8 col-md-6 col-sm-6">
                  <div class="footer-menu">
-                     <img src="{{ asset('dist/assets/img/logo.png') }}" alt="logo" />
+                     <img src="{{ asset('dist/assets/img/logo/logo.jpg') }}" style="width: 100px" alt="logo" />
                      <div class="mt-5 social-links">
                          <ul class="gap-2 d-flex list-unstyled">
                              <li>

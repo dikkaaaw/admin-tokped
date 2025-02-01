@@ -14,9 +14,26 @@
                 <!-- Add user address section -->
                 <div class="mb-4">
                     <label class="text-black form-label text-muted">Delivery Address</label>
-                    <div class="p-3 border border-black rounded">
-                        <p class="mb-0">{{ auth()->user()->address ?? 'No address set' }}</p>
+                    <div class="p-3 border border-black rounded" id="address-container">
+                        <p class="mb-0" id="address-text">{{ auth()->user()->address ?? 'No address set' }}</p>
+                        <i id="edit-btn" class="fas fa-edit" style="cursor: pointer; color: #f39c12;"></i>
+                        <!-- Ikon pensil menggunakan Font Awesome -->
                     </div>
+
+                    <!-- Form input yang tersembunyi, hanya muncul ketika tombol "Edit" diklik -->
+                    <div id="address-form-container" style="display: none;">
+                        <form method="POST" action="{{ route('updateAddress') }}">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Delivery Address</label>
+                                <input type="text" id="address" name="address" class="form-control"
+                                    value="{{ auth()->user()->address ?? '' }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                        </form>
+                    </div>
+
                 </div>
 
                 <div class="cart-items-container" style="max-height: 60vh; overflow-y: auto;">
@@ -28,20 +45,30 @@
                                     'quantity' => $group->sum('quantity'),
                                     'total_price' => $group->sum('total_price'),
                                     'product_name' => $group->first()->product_name,
+                                    'product_id' => $group->first()->id_product, // Menyertakan ID produk
+                                    'id' => $group->first()->id, // Menyertakan ID order
                                 ];
                             });
                         @endphp
 
                         @foreach ($groupedOrders as $order)
-                            <li class="py-3 list-group-item border-bottom">
+                            <li class="py-3 list-group-item border-bottom" data-order-id="{{ $order['id'] }}">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex align-items-center">
                                         <div class="me-3">
                                             <h6 class="mb-1 fw-semibold">{{ $order['product_name'] }}</h6>
                                             <div class="quantity-controls d-flex align-items-center">
-                                                <button class="px-2 py-0 btn btn-sm btn-outline-secondary">-</button>
-                                                <span class="mx-2">{{ $order['quantity'] }}</span>
-                                                <button class="px-2 py-0 btn btn-sm btn-outline-secondary">+</button>
+                                                <!-- Tombol minus -->
+                                                <button class="px-2 py-0 btn btn-sm btn-outline-secondary decrement-btn"
+                                                    data-order-id="{{ $order['id'] }}">-</button>
+
+                                                <!-- Menampilkan kuantitas produk -->
+                                                <span class="mx-2 quantity-input"
+                                                    data-order-id="{{ $order['id'] }}">{{ $order['quantity'] }}</span>
+
+                                                <!-- Tombol plus -->
+                                                <button class="px-2 py-0 btn btn-sm btn-outline-secondary increment-btn"
+                                                    data-order-id="{{ $order['id'] }}">+</button>
                                             </div>
                                         </div>
                                     </div>
@@ -56,22 +83,32 @@
                 <div class="pt-3 mt-4 border-top">
                     <div class="mb-4 d-flex justify-content-between align-items-center">
                         <span class="fs-5">Total</span>
-                        <span class="fs-5 fw-bold text-primary">Rp. {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                        <span class="fs-5 fw-bold text-primary">Rp.
+                            {{ number_format($totalPrice, 0, ',', '.') }}</span>
                     </div>
 
-                    <form action="{{ route('cart.update') }}" method="POST">
+                    <form action="{{ route('cart.update') }}" method="POST" id="update-cart-form">
                         @csrf
-                        <input type="hidden" name="dataOrder" value="{{ $dataOrder }}">
+                        <!-- Menambahkan input hidden untuk dataOrder -->
+                        <input type="hidden" name="dataOrder" id="dataOrder"
+                            value="{{ json_encode($groupedOrders) }}">
+
+                        <input type="hidden" name="removedItems" id="removedItems" value="[]">
+
+                        <!-- Form input tambahan, seperti note -->
                         <div class="mb-3">
                             <label for="orderNote" class="text-black form-label text-muted">Additional
                                 Instructions</label>
                             <textarea class="border border-black form-control" name="note" id="orderNote" rows="4"
                                 placeholder="Add any special requests here..."></textarea>
                         </div>
+
                         <button class="mb-2 w-100 btn btn-primary btn-lg rounded-3" type="submit">
                             Proceed to Checkout
                         </button>
                     </form>
+
+
                 </div>
             @else
                 <div class="py-5 text-center">
@@ -83,6 +120,8 @@
         </div>
     </div>
 </div>
+
+
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasSearch" aria-labelledby="Search">
     <div class="ml-5 offcanvas-header">
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -110,9 +149,8 @@
         <div class="py-3 row border-bottom">
             <div class="text-center col-sm-4 col-lg-3 text-sm-start">
                 <div class="main-logo">
-                    <a href="index.html">
-                        <img src="{{ asset('dist/assets/img/logo.png') }}" alt="logo" class="img-fluid" />
-                    </a>
+                    <img src="{{ asset('dist/assets/img/logo/logo.jpg') }}" style="width: 100px" alt="logo"
+                        class="img-fluid" />
                 </div>
             </div>
             <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
@@ -220,3 +258,87 @@
     </div> --}}
 </header>
 <!-- / Navbar -->
+
+<script>
+    document.getElementById('edit-btn').addEventListener('click', function() {
+        // Sembunyikan alamat teks
+        document.getElementById('address-container').style.display = 'none';
+
+        // Tampilkan form input alamat
+        document.getElementById('address-form-container').style.display = 'block';
+    });
+
+    document.getElementById('cancel-btn').addEventListener('click', function() {
+        // Sembunyikan form input alamat
+        document.getElementById('address-form-container').style.display = 'none';
+
+        // Tampilkan alamat teks
+        document.getElementById('address-container').style.display = 'block';
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mengatur event listener untuk tombol plus
+        document.querySelectorAll('.increment-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const orderId = this.dataset.orderId;
+                const quantitySpan = document.querySelector(
+                    `.quantity-input[data-order-id="${orderId}"]`);
+                let quantity = parseInt(quantitySpan.innerText);
+                quantity++;
+                quantitySpan.innerText = quantity; // Update tampilan kuantitas
+                updateOrder(orderId, quantity);
+            });
+        });
+
+        // Mengatur event listener untuk tombol minus
+        document.querySelectorAll('.decrement-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const orderId = this.dataset.orderId;
+                const quantitySpan = document.querySelector(
+                    `.quantity-input[data-order-id="${orderId}"]`);
+                let quantity = parseInt(quantitySpan.innerText);
+
+                // Mengurangi kuantitas jika lebih dari 0
+                if (quantity > 1) {
+                    quantity--;
+                    quantitySpan.innerText = quantity; // Update tampilan kuantitas
+                    updateOrder(orderId, quantity);
+                } else if (quantity === 1) {
+                    quantity--;
+                    quantitySpan.innerText = quantity; // Update tampilan kuantitas menjadi 0
+                    updateOrder(orderId,
+                        quantity); // Mengirim permintaan untuk update kuantitas
+                    // Menghapus item jika kuantitas mencapai 0
+                    document.querySelector(`li[data-order-id="${orderId}"]`).remove();
+                }
+            });
+        });
+
+        // Fungsi untuk memperbarui kuantitas dan menghapus item jika kuantitas 0
+        function updateOrder(orderId, quantity) {
+            console.log(orderId, quantity);
+            // Ambil nilai note untuk semua produk
+            const note = document.querySelector('#orderNote')
+            .value; // Mengambil note yang diterapkan pada semua produk
+
+            // Ambil seluruh dataOrder dari elemen yang ada
+            const dataOrder = {};
+            document.querySelectorAll('.quantity-input').forEach(function(el) {
+                const id = el.dataset.orderId;
+                const quantity = parseInt(el.innerText);
+                dataOrder[id] = {
+                    id: id,
+                    quantity: quantity,
+                    is_checkout: 0 // Tentukan nilai default untuk is_checkout
+                };
+            });
+
+            // Menambahkan serialized dataOrder ke dalam form
+            document.getElementById('dataOrder').value = JSON.stringify(dataOrder);
+
+            // Menambahkan array removedItems ke dalam form
+            document.getElementById('removedItems').value = JSON.stringify(removedItems);
+        }
+        
+    });
+</script>

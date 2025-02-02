@@ -42,6 +42,7 @@
                         @php
                             $groupedOrders = $dataOrder->groupBy('product_name')->map(function ($group) {
                                 return [
+                                    'price_per_item' => $group->first()->price_per_product,
                                     'quantity' => $group->sum('quantity'),
                                     'total_price' => $group->sum('total_price'),
                                     'product_name' => $group->first()->product_name,
@@ -52,6 +53,8 @@
                         @endphp
 
                         @foreach ($groupedOrders as $order)
+                            <input type="text" value="{{ $order['price_per_item'] }}" hidden class="price-per-item"
+                                data-order-id="{{ $order['id'] }}">
                             <li class="py-3 list-group-item border-bottom" data-order-id="{{ $order['id'] }}">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex align-items-center">
@@ -72,8 +75,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <span
-                                        class="text-primary fw-semibold">{{ 'Rp. ' . number_format($order['total_price'], 0, ',', '.') }}</span>
+                                    <span class="text-primary fw-semibold item-pricing"
+                                        data-order-id="{{ $order['id'] }}">{{ 'Rp. ' . number_format($order['price_per_item'] * $order['quantity'], 0, ',', '.') }}</span>
                                 </div>
                             </li>
                         @endforeach
@@ -83,7 +86,7 @@
                 <div class="pt-3 mt-4 border-top">
                     <div class="mb-4 d-flex justify-content-between align-items-center">
                         <span class="fs-5">Total</span>
-                        <span class="fs-5 fw-bold text-primary">Rp.
+                        <span class="fs-5 fw-bold text-primary total-price">Rp.
                             {{ number_format($totalPrice, 0, ',', '.') }}</span>
                     </div>
 
@@ -283,10 +286,22 @@
                 const orderId = this.dataset.orderId;
                 const quantitySpan = document.querySelector(
                     `.quantity-input[data-order-id="${orderId}"]`);
+                const pricePerItemElement = document.querySelector(
+                    `.price-per-item[data-order-id="${orderId}"]`
+                );
                 let quantity = parseInt(quantitySpan.innerText);
                 quantity++;
                 quantitySpan.innerText = quantity; // Update tampilan kuantitas
-                updateOrder(orderId, quantity);
+
+                let newQuantity = updateOrder(orderId, quantity);
+
+                // Periksa apakah elemen price-per-item ada
+                if (pricePerItemElement) {
+                    const pricePerOrder = pricePerItemElement.value;
+                    updatePricing(orderId, pricePerOrder, newQuantity);
+                } else {
+                    console.error('Elemen price-per-item tidak ditemukan!');
+                }
             });
         });
 
@@ -296,18 +311,34 @@
                 const orderId = this.dataset.orderId;
                 const quantitySpan = document.querySelector(
                     `.quantity-input[data-order-id="${orderId}"]`);
+                // Periksa apakah elemen price-per-item ada
+                const pricePerItemElement = document.querySelector(
+                    `.price-per-item[data-order-id="${orderId}"]`
+                );
                 let quantity = parseInt(quantitySpan.innerText);
 
                 // Mengurangi kuantitas jika lebih dari 0
                 if (quantity > 1) {
                     quantity--;
                     quantitySpan.innerText = quantity; // Update tampilan kuantitas
-                    updateOrder(orderId, quantity);
+                    let newQuantity = updateOrder(orderId, quantity);
+                    if (pricePerItemElement) {
+                        const pricePerOrder = pricePerItemElement.value;
+                        updatePricing(orderId, pricePerOrder, newQuantity);
+                    } else {
+                        console.error('Elemen price-per-item tidak ditemukan!');
+                    }
                 } else if (quantity === 1) {
                     quantity--;
                     quantitySpan.innerText = quantity; // Update tampilan kuantitas menjadi 0
-                    updateOrder(orderId,
-                        quantity); // Mengirim permintaan untuk update kuantitas
+
+                    let newQuantity = updateOrder(orderId, quantity);
+                    if (pricePerItemElement) {
+                        const pricePerOrder = pricePerItemElement.value;
+                        updatePricing(orderId, pricePerOrder, newQuantity);
+                    } else {
+                        console.error('Elemen price-per-item tidak ditemukan!');
+                    }
                     // Menghapus item jika kuantitas mencapai 0
                     document.querySelector(`li[data-order-id="${orderId}"]`).remove();
                 }
@@ -316,10 +347,9 @@
 
         // Fungsi untuk memperbarui kuantitas dan menghapus item jika kuantitas 0
         function updateOrder(orderId, quantity) {
-            console.log(orderId, quantity);
             // Ambil nilai note untuk semua produk
             const note = document.querySelector('#orderNote')
-            .value; // Mengambil note yang diterapkan pada semua produk
+                .value; // Mengambil note yang diterapkan pada semua produk
 
             // Ambil seluruh dataOrder dari elemen yang ada
             const dataOrder = {};
@@ -338,7 +368,46 @@
 
             // Menambahkan array removedItems ke dalam form
             document.getElementById('removedItems').value = JSON.stringify(removedItems);
+            return quantity;
+
         }
-        
+
+        function gatherPrices() {
+            // Mengambil semua elemen dengan class .price-per-item
+            const priceElements = document.querySelectorAll('.item-pricing');
+            // Array untuk menyimpan hasil harga per item
+            const prices = [];
+
+            // Melakukan iterasi untuk setiap elemen
+            priceElements.forEach(element => {
+                // Mendapatkan value harga per item dan menambahkannya ke array
+                // Mengambil teks dari elemen
+                let priceText = element.innerText;
+                // Menghapus "Rp." dan karakter titik (pemisah ribuan)
+                let numericPrice = priceText.replace('Rp. ', '').replace(/\./g, '');
+                // Mengonversi hasil string menjadi angka (integer)
+                let price = parseInt(numericPrice, 10);
+
+                // Menampilkan hasil harga yang sudah diproses
+                prices.push(price);
+            });
+
+            return prices; // Mengembalikan array harga per item
+        }
+
+
+        function updatePricing(orderId, pricePerItem, quantity) {
+            const totalPrice = pricePerItem * quantity;
+            document.querySelector(`span.item-pricing[data-order-id="${orderId}"]`).innerText = 'Rp. ' +
+                totalPrice
+                .toLocaleString('id-ID');
+
+            // Memanggil fungsi untuk mengumpulkan harga
+            let prices = gatherPrices();
+
+            prices = prices.reduce((acc, currentPrice) => acc + currentPrice, 0);
+            document.querySelector('.total-price').innerText = 'Rp. ' + prices.toLocaleString('id-ID');
+        }
+
     });
 </script>

@@ -84,13 +84,13 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('login');
+        return redirect('/');
     }
 
     public function updateAddress(Request $request)
     {
         $user = User::find(Auth::id());
-        if($user) {
+        if ($user) {
             $user->address = $request->address;
             $user->save();
         }

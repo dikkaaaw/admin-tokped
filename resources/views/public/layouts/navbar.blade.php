@@ -15,25 +15,25 @@
                 <div class="mb-4">
                     <label class="text-black form-label text-muted">Delivery Address</label>
                     <div class="p-3 border border-black rounded" id="address-container">
-                        <p class="mb-0" id="address-text">{{ auth()->user()->address ?? 'No address set' }}</p>
-                        <i id="edit-btn" class="fas fa-edit" style="cursor: pointer; color: #f39c12;"></i>
-                        <!-- Ikon pensil menggunakan Font Awesome -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="mb-0" id="address-text">{{ auth()->user()->address ?? 'No address set' }}</p>
+                            <i id="edit-btn" class="fas fa-edit ms-2" style="cursor: pointer; color: #f39c12;"></i>
+                        </div>
                     </div>
 
                     <!-- Form input yang tersembunyi, hanya muncul ketika tombol "Edit" diklik -->
                     <div id="address-form-container" style="display: none;">
-                        <form method="POST" action="{{ route('updateAddress') }}">
+                        <form method="POST" action="{{ route('updateAddress') }}" class="mt-3">
                             @csrf
                             <div class="mb-3">
-                                <label for="address" class="form-label">Delivery Address</label>
-                                <input type="text" id="address" name="address" class="form-control"
-                                    value="{{ auth()->user()->address ?? '' }}" required>
+                                <textarea id="address" name="address" class="border border-black form-control" rows="3" required>{{ auth()->user()->address ?? '' }}</textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save</button>
-                            <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                            <div class="gap-2 d-flex">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                            </div>
                         </form>
                     </div>
-
                 </div>
 
                 <div class="cart-items-container" style="max-height: 60vh; overflow-y: auto;">
@@ -152,8 +152,8 @@
         <div class="py-3 row border-bottom">
             <div class="text-center col-sm-4 col-lg-3 text-sm-start">
                 <div class="main-logo">
-                    <img src="{{ asset('dist/assets/img/logo/logo.jpg') }}" style="width: 100px" alt="logo"
-                        class="img-fluid" />
+                    <img src="{{ asset('dist/assets/img/logo/logo.jpg') }}"
+                        style="width: 180px; height: 70px; object-fit: contain;" alt="logo" class="img-fluid" />
                 </div>
             </div>
             <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
@@ -197,6 +197,13 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
+                                @if (auth()->user()->is_admin == 1)
+                                    <li><a class="dropdown-item" href="{{ URL('admin/dashboard') }}">Admin
+                                            Dashboard</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                @endif
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
@@ -237,46 +244,27 @@
             </div>
         </div>
     </div>
-
-    {{-- <div class="container-fluid">
-        <div class="py-3 row">
-            <div class="d-flex justify-content-center justify-content-sm-between align-items-center">
-                <div class="main-menu d-flex navbar navbar-expand-lg">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
-                        aria-labelledby="offcanvasNavbarLabel">
-                        <div class="offcanvas-header justify-content-center">
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
-                                aria-label="Close"></button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 </header>
 <!-- / Navbar -->
 
 <script>
-    document.getElementById('edit-btn').addEventListener('click', function() {
-        // Sembunyikan alamat teks
-        document.getElementById('address-container').style.display = 'none';
+    document.addEventListener('DOMContentLoaded', function() {
+        const addressContainer = document.getElementById('address-container');
+        const addressFormContainer = document.getElementById('address-form-container');
+        const editBtn = document.getElementById('edit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
 
-        // Tampilkan form input alamat
-        document.getElementById('address-form-container').style.display = 'block';
-    });
+        if (editBtn && cancelBtn && addressContainer && addressFormContainer) {
+            editBtn.addEventListener('click', () => {
+                addressContainer.style.display = 'none';
+                addressFormContainer.style.display = 'block';
+            });
 
-    document.getElementById('cancel-btn').addEventListener('click', function() {
-        // Sembunyikan form input alamat
-        document.getElementById('address-form-container').style.display = 'none';
-
-        // Tampilkan alamat teks
-        document.getElementById('address-container').style.display = 'block';
+            cancelBtn.addEventListener('click', () => {
+                addressFormContainer.style.display = 'none';
+                addressContainer.style.display = 'block';
+            });
+        }
     });
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -406,7 +394,12 @@
             let prices = gatherPrices();
 
             prices = prices.reduce((acc, currentPrice) => acc + currentPrice, 0);
+
+            // Update total price in cart
             document.querySelector('.total-price').innerText = 'Rp. ' + prices.toLocaleString('id-ID');
+
+            // Update total price in navbar
+            document.querySelector('.cart-total').innerText = 'Rp. ' + prices.toLocaleString('id-ID');
         }
 
     });

@@ -119,8 +119,8 @@ class PageController extends Controller
             $product = Product::find($order->id_product);
 
             // Menghitung harga per produk dan total harga per order
-            $pricePerProduct = $product ? (int)$product->price * (int)$order->quantity : 0;
-            $totalPricePerOrder = $pricePerProduct;
+            $pricePerProduct = $product ? (int)$product->price : 0;
+            $totalPricePerOrder = $product ? (int)$pricePerProduct * (int)$order->quantity : 0;
 
             // Menambahkan harga per produk dan total harga per order
             $order->price_per_product = $pricePerProduct;
@@ -194,7 +194,7 @@ class PageController extends Controller
                 $removedOrder->delete();
             }
         }
-        
+
         // Kembalikan respons yang sesuai
         return redirect()->route('homepage');
     }

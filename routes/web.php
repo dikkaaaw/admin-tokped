@@ -24,9 +24,10 @@ Route::name('admin.')
         Route::prefix('product')->group(function () {
             Route::get('/', 'ProductController@index')->name('product.index');
             Route::get('/add', 'ProductController@add')->name('product.add');
-            Route::post('/add', 'ProductController@proccessadd')->name('product.store');
+            Route::post('/proccessadd', 'ProductController@proccessadd')->name('product.store');
             Route::get('/{product}', 'ProductController@edit')->name('product.edit');
-            Route::post('/{product}', 'ProductController@proccessedit')->name('product.update');
+            Route::post('/proccessedit/{product}', 'ProductController@proccessedit')->name('product.update');
+            Route::get('/delete/{product}', 'ProductController@delete')->name('product.delete');
         });
 
         // Order Routes

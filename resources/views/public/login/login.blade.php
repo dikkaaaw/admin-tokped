@@ -1,35 +1,77 @@
 @extends('public.layouts.app')
 
 @section('content')
-    <div class="flex items-center justify-center min-h-screen bg-gray-100">
-        <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-            <h2 class="mb-6 text-2xl font-bold text-center">Login</h2>
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-                <div class="mb-4">
-                    <label class="block mb-2 text-sm font-bold text-gray-700" for="email">
-                        Email Address
-                    </label>
-                    <input
-                        class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                        id="email" type="email" name="email" required>
+    <div class="container">
+        <div class="row justify-content-center min-vh-100 align-items-center">
+            <div class="col-md-6">
+                <div class="shadow card">
+                    <div class="p-5 card-body">
+                        <div class="mb-4 text-center main-logo">
+                            <img src="{{ asset('dist/assets/img/logo/logo.jpg') }}" style="width: 100px" alt="logo"
+                                class="img-fluid" />
+                        </div>
+                        <div class="text-center">
+                            <h2 class="mb-3 fw-bold">Welcome Back!</h2>
+                            <p class="text-muted small">Please sign in to your account</p>
+                        </div>
+
+                        <form class="mt-4" method="POST" action="{{ route('login') }}">
+                            @csrf
+                            <!-- Email Input -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-envelope"></i>
+                                    </span>
+                                    <input id="email" name="email" type="email" class="form-control" required
+                                        placeholder="Enter your email">
+                                </div>
+                            </div>
+
+                            <!-- Password Input -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-lock"></i>
+                                    </span>
+                                    <input id="password" name="password" type="password" class="form-control" required
+                                        placeholder="Enter your password">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-eye" id="togglePassword" style="cursor: pointer;"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Login Button -->
+                            <div class="gap-2 d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign in
+                                </button>
+                            </div>
+
+                            <!-- Register Link -->
+                            <div class="mt-3 text-center">
+                                <p class="text-muted">
+                                    Don't have an account?
+                                    <a href="{{ route('register') }}" class="text-decoration-none">Register here</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="mb-6">
-                    <label class="block mb-2 text-sm font-bold text-gray-700" for="password">
-                        Password
-                    </label>
-                    <input
-                        class="w-full px-3 py-2 mb-3 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                        id="password" type="password" name="password" required>
-                </div>
-                <div class="flex items-center justify-between">
-                    <button
-                        class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-                        type="submit">
-                        Sign In
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function(e) {
+            const password = document.getElementById('password');
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 @endsection

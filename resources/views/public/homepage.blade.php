@@ -171,30 +171,58 @@
                                                             </button>
                                                         </div>
 
-                                                        <form action="{{ route('cart.store') }}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="id"
-                                                                value="{{ $product->id }}">
-                                                            <input type="hidden" name="name"
-                                                                value="{{ $product->name }}">
-                                                            <input type="hidden" name="price"
-                                                                value="{{ $product->price }}">
-                                                            <input type="hidden" name="category"
-                                                                value="{{ $product->category }}">
-                                                            <input type="hidden" name="quantity" value="1"
-                                                                id="hidden-quantity_{{ $product->id }}"
-                                                                class="hidden-quantity">
+                                                        @auth
+                                                            <form action="{{ route('cart.store') }}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="id"
+                                                                    value="{{ $product->id }}">
+                                                                <input type="hidden" name="name"
+                                                                    value="{{ $product->name }}">
+                                                                <input type="hidden" name="price"
+                                                                    value="{{ $product->price }}">
+                                                                <input type="hidden" name="category"
+                                                                    value="{{ $product->category }}">
+                                                                <input type="hidden" name="quantity" value="1"
+                                                                    id="hidden-quantity_{{ $product->id }}"
+                                                                    class="hidden-quantity">
 
-                                                            <button type="submit" class="btn btn-primary w-100">
+                                                                <button type="submit" class="btn btn-primary w-100">
+                                                                    <i class="fas fa-shopping-cart me-2"></i>
+                                                                    Add to Cart
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <button type="button" class="btn btn-primary w-100"
+                                                                data-bs-toggle="modal" data-bs-target="#loginModal">
                                                                 <i class="fas fa-shopping-cart me-2"></i>
                                                                 Add to Cart
                                                             </button>
-                                                        </form>
+                                                        @endauth
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @endforeach
+                                </div>
+                                <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="loginModalLabel">Login Required</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Please login to add items to your cart.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <!-- / product-grid -->
                             </div>
@@ -237,10 +265,9 @@
                             </div>
                             <div class="col-md-10">
                                 <div class="p-0 card-body">
-                                    <h5>Free delivery</h5>
+                                    <h5>Free Shipping</h5>
                                     <p class="card-text">
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipi elit.
+                                        Free delivery for all orders over Rp 500.000
                                     </p>
                                 </div>
                             </div>
@@ -259,10 +286,9 @@
                             </div>
                             <div class="col-md-10">
                                 <div class="p-0 card-body">
-                                    <h5>100% secure payment</h5>
+                                    <h5>Secure Payment</h5>
                                     <p class="card-text">
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipi elit.
+                                        We ensure secure payment with multiple payment options
                                     </p>
                                 </div>
                             </div>
@@ -281,10 +307,9 @@
                             </div>
                             <div class="col-md-10">
                                 <div class="p-0 card-body">
-                                    <h5>Quality guarantee</h5>
+                                    <h5>Premium Quality</h5>
                                     <p class="card-text">
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipi elit.
+                                        We guarantee the quality of all our products
                                     </p>
                                 </div>
                             </div>
@@ -303,10 +328,9 @@
                             </div>
                             <div class="col-md-10">
                                 <div class="p-0 card-body">
-                                    <h5>guaranteed savings</h5>
+                                    <h5>Best Price</h5>
                                     <p class="card-text">
-                                        Lorem ipsum dolor sit amet, consectetur
-                                        adipi elit.
+                                        Get the best prices and regular special offers
                                     </p>
                                 </div>
                             </div>

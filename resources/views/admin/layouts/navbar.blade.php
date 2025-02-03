@@ -9,7 +9,7 @@
 
      <!-- Right navbar links -->
      <ul class="ml-auto navbar-nav">
-         <!-- Navbar Search -->
+         {{-- <!-- Navbar Search -->
          <li class="nav-item">
              <a class="nav-link" data-widget="navbar-search" href="#" role="button">
                  <i class="fas fa-search"></i>
@@ -30,7 +30,7 @@
                      </div>
                  </form>
              </div>
-         </li>
+         </li> --}}
 
          <li class="nav-item">
              <a class="nav-link" data-widget="fullscreen" href="#" role="button">

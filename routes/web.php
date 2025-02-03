@@ -36,14 +36,17 @@ Route::name('admin.')
             Route::get('/add', 'OrderController@add')->name('order.add');
             Route::post('/add', 'OrderController@proccessadd')->name('order.store');
             Route::get('/{order}', 'OrderController@edit')->name('order.edit');
-            Route::post('/{order}', 'OrderController@proccessedit')->name('order.update');
+            Route::post('/proccessedit/{order}', 'OrderController@proccessedit')->name('order.update');
+            Route::get('/delete/{order}', 'OrderController@delete')->name('order.delete');
         });
 
         // User Routes
         Route::prefix('user')->group(function () {
             Route::get('/', 'UserController@index')->name('user.index');
             Route::get('/{user}', 'UserController@read')->name('user.show');
-            Route::post('/{user}', 'UserController@proccessedit')->name('user.update');
+            Route::post('/{user}', 'UserController@edit')->name('user.edit');
+            Route::post('/proccessedit/{user}', 'UserController@proccessedit')->name('user.update');
+            Route::get('/delete/{user}', 'UserController@delete')->name('user.delete');
         });
 
         // Transaction Routes

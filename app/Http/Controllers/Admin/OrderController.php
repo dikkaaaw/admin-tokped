@@ -8,11 +8,15 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = new Order;
+        $filters = [
+            'search'    => $request->search ? $request->search : '',
+        ];
+        $orders = new Order;
 
-        $data['view_orders'] = $products->orderBy('created_at', 'asc')
+        $data['view_orders'] = $orders->filter($filters)
+            ->orderBy('created_at', 'asc')
             ->paginate(10);
 
         return view('admin.orders.order', $data);

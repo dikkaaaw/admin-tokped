@@ -92,6 +92,11 @@
                     @endforeach
                 </tbody>
             </table>
+            @if ($view_orders->isEmpty())
+                <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+                    <p>No order found</p>
+                </div>
+            @endif
             <div class="mt-3">
                 @if ($view_orders->hasPages())
                     <nav>
@@ -124,4 +129,5 @@
             </div>
         </div>
     </div>
+
 @endsection

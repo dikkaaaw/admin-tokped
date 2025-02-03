@@ -93,6 +93,11 @@
                     @endforeach
                 </tbody>
             </table>
+            @if ($view_product->isEmpty())
+                <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+                    <p>No product found</p>
+                </div>
+            @endif
             <div class="mt-3">
                 @if ($view_products->hasPages())
                     <nav>

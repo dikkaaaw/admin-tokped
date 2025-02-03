@@ -85,6 +85,11 @@
                     @endforeach
                 </tbody>
             </table>
+            @if ($view_users->isEmpty())
+                <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+                    <p>No user found</p>
+                </div>
+            @endif
             <div class="mt-3">
                 @if ($view_users->hasPages())
                     <nav>

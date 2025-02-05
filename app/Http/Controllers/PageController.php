@@ -184,6 +184,13 @@ class PageController extends Controller
                 if ($oldOrder->quantity <= 0) {
                     $oldOrder->delete();
                 }
+
+                // update stock product
+                $product = Product::find($oldOrder->id_product);
+                if ($product) {
+                    $product->stock = $product->stock - $oldOrder->quantity;
+                    $product->save();
+                }
             }
         }
 
@@ -196,7 +203,7 @@ class PageController extends Controller
         }
 
         // Kembalikan respons yang sesuai
-        return redirect()->route('homepage');
+        return redirect()->route('homepage')->with('status', 'Cart updated successfully');
     }
 
 

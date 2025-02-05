@@ -142,7 +142,7 @@
 
                                                 <div class="card-body d-flex flex-column">
                                                     <h5 class="mb-1 card-title">{{ $product->name }}</h5>
-                                                    <p class="mb-2 text-muted small">Stock: {{ $product->stock }} pcs
+                                                    <p class="mb-2 text-muted small currently-stock">Stock: {{ $product->stock }} pcs
                                                     </p>
 
                                                     <div class="mb-3">
@@ -186,10 +186,17 @@
                                                                     id="hidden-quantity_{{ $product->id }}"
                                                                     class="hidden-quantity">
 
-                                                                <button type="submit" class="btn btn-primary w-100">
-                                                                    <i class="fas fa-shopping-cart me-2"></i>
-                                                                    Add to Cart
-                                                                </button>
+                                                                @if ($product->stock <= 0)
+                                                                    <button type="button" class="btn btn-danger w-100"
+                                                                        disabled>
+                                                                        Out of Stock
+                                                                    </button>
+                                                                @else
+                                                                    <button type="submit" class="btn btn-primary w-100">
+                                                                        <i class="fas fa-shopping-cart me-2"></i>
+                                                                        Add to Cart
+                                                                    </button>
+                                                                @endif
                                                             </form>
                                                         @else
                                                             <button type="button" class="btn btn-primary w-100"
@@ -345,49 +352,59 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Tombol tambah
             document.querySelectorAll('.quantity-right-plus').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    var input = this.closest('.input-group').querySelector('.input-number');
-                    var value = parseInt(input.value);
-                    input.value = value + 1;
+            button.addEventListener('click', function() {
+                var input = this.closest('.input-group').querySelector('.input-number');
+                var value = parseInt(input.value);
+                var stock = parseInt(this.closest('.product-card').querySelector('.currently-stock').innerText.replace('Stock: ', '').replace(' pcs', ''));
 
-                    // Update hidden input sesuai dengan produk
-                    var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset
-                        .productId);
-                    if (hiddenInput) {
-                        hiddenInput.value = input.value;
-                    }
-                });
+                if (value < stock) {
+                input.value = value + 1;
+                }
+
+                // Update hidden input sesuai dengan produk
+                var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset.productId);
+                if (hiddenInput) {
+                hiddenInput.value = input.value;
+                }
+            });
             });
 
             // Tombol kurang
             document.querySelectorAll('.quantity-left-minus').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    var input = this.closest('.input-group').querySelector('.input-number');
-                    var value = parseInt(input.value);
+            button.addEventListener('click', function() {
+                var input = this.closest('.input-group').querySelector('.input-number');
+                var value = parseInt(input.value);
 
-                    // Pastikan tidak bisa kurang dari 1
-                    if (value > 1) {
-                        input.value = value - 1;
-                    }
+                // Pastikan tidak bisa kurang dari 1
+                if (value > 1) {
+                input.value = value - 1;
+                }
 
-                    // Update hidden input sesuai dengan produk
-                    var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset
-                        .productId);
-                    if (hiddenInput) {
-                        hiddenInput.value = input.value;
-                    }
-                });
+                // Update hidden input sesuai dengan produk
+                var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset.productId);
+                if (hiddenInput) {
+                hiddenInput.value = input.value;
+                }
+            });
             });
 
             // Handle perubahan input langsung
             document.querySelectorAll('.input-number').forEach(function(input) {
-                input.addEventListener('change', function() {
-                    var hiddenInput = document.getElementById('hidden-quantity_' + this.dataset
-                        .productId);
-                    if (hiddenInput) {
-                        hiddenInput.value = this.value;
-                    }
-                });
+            input.addEventListener('change', function() {
+                var stock = parseInt(this.closest('.product-card').querySelector('.currently-stock').innerText.replace('Stock: ', '').replace(' pcs', ''));
+                var value = parseInt(this.value);
+
+                if (value > stock) {
+                this.value = stock;
+                } else if (value < 1) {
+                this.value = 1;
+                }
+
+                var hiddenInput = document.getElementById('hidden-quantity_' + this.dataset.productId);
+                if (hiddenInput) {
+                hiddenInput.value = this.value;
+                }
+            });
             });
         });
     </script>

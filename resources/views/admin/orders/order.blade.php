@@ -40,6 +40,7 @@
                     <tr>
                         <th>Order ID</th>
                         <th>Customer Name</th>
+                        <th>Address</th>
                         <th>Product</th>
                         <th>Status</th>
                         <th>Quantity</th>
@@ -48,11 +49,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($view_orders as $order)
+                    @foreach ($allOrders as $order)
                         <tr>
-                            <td>{{ 'ORDER' . $order->id }}</td>
-                            <td>{{ $order->id_user }}</td>
-                            <td>{{ $order->id_product }}</td>
+                            <td>{{ 'ORDER ' . $order->id }}</td>
+                            <td>{{ $order->user->name }}</td>
+                            <td>{{ $order->user->address }}</td>
+                            <td>{{ $order->product->name }}</td>
                             <td>{{ $order->is_checkout }}</td>
                             <td>{{ $order->quantity }}</td>
                             <td>{{ $order->created_at }}</td>
@@ -92,31 +94,31 @@
                     @endforeach
                 </tbody>
             </table>
-            @if ($view_orders->isEmpty())
+            @if ($allOrders->isEmpty())
                 <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
                     <p>No order found</p>
                 </div>
             @endif
             <div class="mt-3">
-                @if ($view_orders->hasPages())
+                @if ($allOrders->hasPages())
                     <nav>
                         <ul class="pagination">
                             {{-- Previous Page Link --}}
-                            @if ($view_orders->onFirstPage())
+                            @if ($allOrders->onFirstPage())
                                 <li class="page-item disabled">
                                     <span class="page-link">Previous</span>
                                 </li>
                             @else
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ $view_orders->previousPageUrl() }}"
+                                    <a class="page-link" href="{{ $allOrders->previousPageUrl() }}"
                                         rel="prev">Previous</a>
                                 </li>
                             @endif
 
                             {{-- Next Page Link --}}
-                            @if ($view_orders->hasMorePages())
+                            @if ($allOrders->hasMorePages())
                                 <li class="page-item">
-                                    <a class="page-link" href="{{ $view_orders->nextPageUrl() }}" rel="next">Next</a>
+                                    <a class="page-link" href="{{ $allOrders->nextPageUrl() }}" rel="next">Next</a>
                                 </li>
                             @else
                                 <li class="page-item disabled">

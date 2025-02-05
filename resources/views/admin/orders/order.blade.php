@@ -45,7 +45,7 @@
                         <th>Status</th>
                         <th>Quantity</th>
                         <th>Total Amount</th>
-                        <th>Tanggal Order</th>
+                        <th>Note</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -59,7 +59,7 @@
                             <td>{{ $order->is_checkout }}</td>
                             <td>{{ $order->quantity }}</td>
                             <td>{{ 'Rp. ' . number_format($order->total_price, 0, ',', '.') }}</td>
-                            <td>{{ $order->created_at }}</td>
+                            <td>{{ $order->message }}</td>
                             <td>
                                 <a href="{{ route('admin.order.edit', $order->id) }}"
                                     class="btn btn-sm btn-primary">Edit</a>

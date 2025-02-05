@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\OrderMessage;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -19,6 +20,7 @@ class OrderController extends Controller
         $orders = new Order;
         $users = new User;
         $products = new Product;
+        $messages = new OrderMessage;
 
         $data['allOrders'] = $orders->filter($filters)
             ->orderBy('created_at', 'asc')
@@ -28,6 +30,15 @@ class OrderController extends Controller
             // get user and product data
             $order->user = $users->find($order->id_user);
             $order->product = $products->find($order->id_product);
+
+            // get messages
+            $tempMessage = $messages->where('id_order', $order->id)->pluck('message')->first();
+
+            if ($tempMessage) {
+                $order->message = $tempMessage;
+            } else {
+                $order->message = '';
+            }
 
             // set status
             $tempStatus = $order->is_checkout;

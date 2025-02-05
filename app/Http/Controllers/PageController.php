@@ -10,6 +10,13 @@ use App\Models\Product;
 
 class PageController extends Controller
 {
+    protected $cartData;
+
+    public function __construct()
+    {
+        $this->cartData = $this->showCart();
+    }
+
     public function page($page)
     {
         return view('public.' . $page);
@@ -20,11 +27,22 @@ class PageController extends Controller
         // Ambil semua produk
         $products = Product::all();
 
-        // Panggil showCart untuk mendapatkan data keranjang
-        $cartData = $this->showCart();
+        $dataOrder = $this->getOldOrder();
 
+        // Kirim data produk dan data keranjang ke view
+        return view('public.homepage', [
+            'products' => $products,
+            'dataOrder' => $dataOrder,
+            'totalPrice' => $this->cartData['totalPrice'],
+            'totalQuantity' => $this->cartData['totalQuantity'],
+            'message' => $this->cartData['message'] ?? null
+        ]);
+    }
+
+    public function getOldOrder()
+    {
         // Pastikan dataOrder adalah koleksi dan filter dilakukan dengan benar
-        $dataOrder = collect($cartData['dataOrder'])  // Gunakan collect() untuk mengubah array menjadi Collection
+        $dataOrder = collect($this->cartData['dataOrder'])  // Gunakan collect() untuk mengubah array menjadi Collection
             ->filter(function ($order) {
                 return !$order->is_checkout;  // Hanya pilih order yang is_checkout = 0
             })
@@ -43,14 +61,7 @@ class PageController extends Controller
                 return $order;
             });
 
-        // Kirim data produk dan data keranjang ke view
-        return view('public.homepage', [
-            'products' => $products,
-            'dataOrder' => $dataOrder,
-            'totalPrice' => $cartData['totalPrice'],
-            'totalQuantity' => $cartData['totalQuantity'],
-            'message' => $cartData['message'] ?? null
-        ]);
+        return $dataOrder;
     }
 
 
@@ -220,5 +231,34 @@ class PageController extends Controller
         $product->delete(); // Menghapus produk
 
         return response()->json(['message' => 'Product deleted successfully']); // Menyatakan penghapusan berhasil
+    }
+
+    public function searchProduct(Request $request)
+    {
+        // Validasi input pencarian
+        $request->validate([
+            'search_input' => 'required|string|max:255',
+        ]);
+
+        // Ambil input pencarian dan ubah menjadi huruf kecil
+        $searchInput = strtolower($request->input('search_input'));
+
+        // Cari produk yang namanya mengandung input pencarian
+        $products = Product::whereRaw('LOWER(name) LIKE ?', ["%{$searchInput}%"])->get();
+
+        // Jika tidak ada produk yang ditemukan, kembalikan pesan
+        if ($products->isEmpty()) {
+            return redirect()->route('homepage')->with('status', 'No products found');
+        }
+
+        $dataOrder = $this->getOldOrder();
+        // Kembalikan hasil pencarian dalam format JSON
+        return view('public.homepage', [
+            'products' => $products,
+            'dataOrder' => $dataOrder,
+            'totalPrice' => $this->cartData['totalPrice'],
+            'totalQuantity' => $this->cartData['totalQuantity'],
+            'message' => $this->cartData['message'] ?? null
+        ]);
     }
 }

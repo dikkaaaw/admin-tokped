@@ -134,10 +134,14 @@
             <h4 class="mb-3 d-flex justify-content-between align-items-center">
                 <span class="text-primary">Search</span>
             </h4>
-            <form role="search" action="index.html" method="get" class="gap-0 mt-3 d-flex">
-                <input class="form-control rounded-start rounded-0 bg-light" type="email"
-                    placeholder="What are you looking for?" aria-label="What are you looking for?" />
-                <button class="btn btn-dark rounded-end rounded-0" type="submit">
+            <form role="search" action="{{ route('homepage.search') }}" method="POST" id="search-form"
+                class="gap-0 mt-3 d-flex">
+                @csrf
+                <input class="form-control rounded-start rounded-0 bg-light" type="text"
+                    placeholder="What are you looking for?" aria-label="What are you looking for?"
+                    name="search_input" />
+                <button class="btn btn-dark rounded-end rounded-0"
+                    onclick="document.getElementById('search-form').submit();" type="submit">
                     Search
                 </button>
             </form>
@@ -158,22 +162,25 @@
             </div>
             <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
                 <div class="p-2 my-2 search-bar row bg-light rounded-4">
-                    <div class="col-md-4 d-none d-md-block">
+                    {{-- <div class="col-md-4 d-none d-md-block">
                         <select class="bg-transparent border-0 form-select">
                             <option value="">All Categories</option>
                             @foreach ($products->unique('category') as $product)
                                 <option value="{{ $product->category }}">{{ $product->category }}</option>
                             @endforeach
                         </select>
-                    </div>
-                    <div class="col-11 col-md-7">
-                        <form id="search-form" class="text-center" action="index.html" method="post">
+                    </div> --}}
+                    <div class="col-12 col-md-11 text-center">
+                        <form action="{{ route('homepage.search') }}" method="POST" id="search-form"
+                            class="text-center">
+                            @csrf
                             <input type="text" class="bg-transparent border-0 form-control"
-                                placeholder="Search for more than 20,000 products" />
+                                placeholder="Search for more than 20,000 products" name="search_input" />
                         </form>
                     </div>
                     <div class="col-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            style="cursor: pointer;" onclick="document.getElementById('search-form').submit();">
                             <path fill="currentColor"
                                 d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z" />
                         </svg>

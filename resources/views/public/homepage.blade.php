@@ -7,7 +7,6 @@
                 <div class="col-md-12">
                     <div class="flex-wrap mb-5 section-header d-flex justify-content-between">
                         <h2 class="section-title">Category</h2>
-
                         <div class="d-flex align-items-center">
                             <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
                             <div class="swiper-buttons">
@@ -111,10 +110,6 @@
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                     <a href="#" class="nav-link text-uppercase fs-6 active" id="nav-all-tab"
                                         data-bs-toggle="tab" data-bs-target="#nav-all">All</a>
-                                    {{-- <a href="#" class="nav-link text-uppercase fs-6" id="nav-fruits-tab"
-                                        data-bs-toggle="tab" data-bs-target="#nav-fruits">Fruits & Veges</a>
-                                    <a href="#" class="nav-link text-uppercase fs-6" id="nav-juices-tab"
-                                        data-bs-toggle="tab" data-bs-target="#nav-juices">Juices</a> --}}
                                 </div>
                             </nav>
                         </div>
@@ -142,7 +137,8 @@
 
                                                 <div class="card-body d-flex flex-column">
                                                     <h5 class="mb-1 card-title">{{ $product->name }}</h5>
-                                                    <p class="mb-2 text-muted small currently-stock">Stock: {{ $product->stock }} pcs
+                                                    <p class="mb-2 text-muted small currently-stock">Stock:
+                                                        {{ $product->stock }} pcs
                                                     </p>
 
                                                     <div class="mb-3">
@@ -233,22 +229,6 @@
                                 </div>
                                 <!-- / product-grid -->
                             </div>
-
-                            <!-- Fruit & Veges -->
-                            {{-- <div class="tab-pane fade" id="nav-fruits" role="tabpanel" aria-labelledby="nav-fruits-tab">
-                                <!-- Product Grids -->
-                                <div
-                                    class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                                </div>
-                            </div>
-
-                            <!-- Juices -->
-                            <div class="tab-pane fade" id="nav-juices" role="tabpanel" aria-labelledby="nav-juices-tab">
-                                <!-- / product-grid -->
-                                <div
-                                    class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                                </div>
-                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -352,59 +332,66 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Tombol tambah
             document.querySelectorAll('.quantity-right-plus').forEach(function(button) {
-            button.addEventListener('click', function() {
-                var input = this.closest('.input-group').querySelector('.input-number');
-                var value = parseInt(input.value);
-                var stock = parseInt(this.closest('.product-card').querySelector('.currently-stock').innerText.replace('Stock: ', '').replace(' pcs', ''));
+                button.addEventListener('click', function() {
+                    var input = this.closest('.input-group').querySelector('.input-number');
+                    var value = parseInt(input.value);
+                    var stock = parseInt(this.closest('.product-card').querySelector(
+                        '.currently-stock').innerText.replace('Stock: ', '').replace(' pcs',
+                        ''));
 
-                if (value < stock) {
-                input.value = value + 1;
-                }
+                    if (value < stock) {
+                        input.value = value + 1;
+                    }
 
-                // Update hidden input sesuai dengan produk
-                var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset.productId);
-                if (hiddenInput) {
-                hiddenInput.value = input.value;
-                }
-            });
+                    // Update hidden input sesuai dengan produk
+                    var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset
+                        .productId);
+                    if (hiddenInput) {
+                        hiddenInput.value = input.value;
+                    }
+                });
             });
 
             // Tombol kurang
             document.querySelectorAll('.quantity-left-minus').forEach(function(button) {
-            button.addEventListener('click', function() {
-                var input = this.closest('.input-group').querySelector('.input-number');
-                var value = parseInt(input.value);
+                button.addEventListener('click', function() {
+                    var input = this.closest('.input-group').querySelector('.input-number');
+                    var value = parseInt(input.value);
 
-                // Pastikan tidak bisa kurang dari 1
-                if (value > 1) {
-                input.value = value - 1;
-                }
+                    // Pastikan tidak bisa kurang dari 1
+                    if (value > 1) {
+                        input.value = value - 1;
+                    }
 
-                // Update hidden input sesuai dengan produk
-                var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset.productId);
-                if (hiddenInput) {
-                hiddenInput.value = input.value;
-                }
-            });
+                    // Update hidden input sesuai dengan produk
+                    var hiddenInput = document.getElementById('hidden-quantity_' + input.dataset
+                        .productId);
+                    if (hiddenInput) {
+                        hiddenInput.value = input.value;
+                    }
+                });
             });
 
             // Handle perubahan input langsung
             document.querySelectorAll('.input-number').forEach(function(input) {
-            input.addEventListener('change', function() {
-                var stock = parseInt(this.closest('.product-card').querySelector('.currently-stock').innerText.replace('Stock: ', '').replace(' pcs', ''));
-                var value = parseInt(this.value);
+                input.addEventListener('change', function() {
+                    var stock = parseInt(this.closest('.product-card').querySelector(
+                        '.currently-stock').innerText.replace('Stock: ', '').replace(' pcs',
+                        ''));
+                    var value = parseInt(this.value);
 
-                if (value > stock) {
-                this.value = stock;
-                } else if (value < 1) {
-                this.value = 1;
-                }
+                    if (value > stock) {
+                        this.value = stock;
+                    } else if (value < 1) {
+                        this.value = 1;
+                    }
 
-                var hiddenInput = document.getElementById('hidden-quantity_' + this.dataset.productId);
-                if (hiddenInput) {
-                hiddenInput.value = this.value;
-                }
-            });
+                    var hiddenInput = document.getElementById('hidden-quantity_' + this.dataset
+                        .productId);
+                    if (hiddenInput) {
+                        hiddenInput.value = this.value;
+                    }
+                });
             });
         });
     </script>

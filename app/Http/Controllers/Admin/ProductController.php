@@ -19,7 +19,9 @@ class ProductController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
-        return view('admin.products.product', $data);
+        return view('admin.products.product', [
+            'view_products' => $data['view_products']
+        ]);
     }
 
     public function add()
@@ -44,16 +46,20 @@ class ProductController extends Controller
         ];
         $this->validate($request, $rule, $message);
 
+        $file = $request->file('image');
+        $imgName = $file->getClientOriginalName();
+
         $data = [
             'name' => $request->name,
             'price' => $request->price,
             'category' => $request->category,
             'stock' => $request->stock,
-            'image' => $request->file('image')->store('/assets/img/buah', 'public'),
+            'image' => $imgName,
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
+        $file->move(public_path('dist/assets/img/buah'), $imgName);
         Product::create($data);
 
         return redirect('admin/product');
@@ -87,7 +93,12 @@ class ProductController extends Controller
         $product->category = $request->category;
         $product->stock = $request->stock;
         if ($request->file('image')) {
-            $product->image = $request->file('image')->store('/assets/img/buah', 'public');
+            $file = $request->file('image');
+            $filename = $file->getClientOriginalName();
+            $product->image = $filename;
+
+            // $file->storeAs('dist/assets/img/buah', $filename, 'public');
+            $file->move(public_path('dist/assets/img/buah'), $filename);
         }
         $product->updated_at = date('Y-m-d H:i:s');
         $product->save();
@@ -97,8 +108,11 @@ class ProductController extends Controller
 
     public function delete(Product $product)
     {
-        $product->delete();
+        if (file_exists(public_path('dist/assets/img/buah/' . $product->image))) {
+            unlink(public_path('dist/assets/img/buah/' . $product->image));
+        }
 
+        $product->delete();
         return redirect('admin/product');
     }
 }

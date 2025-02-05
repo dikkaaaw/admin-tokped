@@ -93,7 +93,7 @@
                     @endforeach
                 </tbody>
             </table>
-            @if ($view_product->isEmpty())
+            @if ($view_products->isEmpty())
                 <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
                     <p>No product found</p>
                 </div>

@@ -50,8 +50,8 @@
                 <div class="form-group">
                     <label for="image">Product Image</label>
                     <input type="file" class="form-control" id="image" name="image">
-                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="mt-2"
-                        width="100">
+                    <img src="{{ asset('public/dist/assets/img/buah/' . $product->image) }}" alt="{{ $product->name }}"
+                        class="mt-2" width="100">
                 </div>
                 <button type="submit" class="btn btn-primary">Update Product</button>
             </form>

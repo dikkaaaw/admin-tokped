@@ -51,6 +51,7 @@ Route::name('admin.')
         Route::prefix('transaction')->group(function () {
             Route::get('/', 'TransactionController@index')->name('transaction.index');
             Route::get('/delete/{transaction}', 'TransactionController@delete')->name('transaction.delete');
+            Route::get('/search', 'TransactionController@search')->name('transaction.search');
         });
     });
 

@@ -51,35 +51,11 @@
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->address }}</td>
                             <td>
-                                <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-sm btn-primary">Edit</a>
-                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ $user->id }}">Delete</button>
-                                <div class="modal fade" id="deleteModal{{ $user->id }}" tabindex="-1"
-                                    aria-labelledby="deleteModalLabel{{ $user->id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModalLabel{{ $user->id }}">Delete
-                                                    Confirmation</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete {{ $user->name }}?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('admin.user.delete', $user->id) }}"
-                                                    class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <form action="{{ route('admin.user.edit', $user->id) }}" method="POST"
+                                    style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach

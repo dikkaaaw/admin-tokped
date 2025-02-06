@@ -1,44 +1,6 @@
 @extends('public.layouts.app')
 
 @section('content')
-    <section class="py-5 overflow-hidden">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="flex-wrap mb-5 section-header d-flex justify-content-between">
-                        <h2 class="section-title">Category</h2>
-                        <div class="d-flex align-items-center">
-                            <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
-                            <div class="swiper-buttons">
-                                <button class="swiper-prev category-carousel-prev btn btn-yellow">
-                                    ❮
-                                </button>
-                                <button class="swiper-next category-carousel-next btn btn-yellow">
-                                    ❯
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="category-carousel swiper">
-                        <div class="swiper-wrapper">
-                            @foreach ($products->groupBy('category')->take(6) as $category => $items)
-                                <a href="#" class="nav-link category-item swiper-slide">
-                                    <img src="{{ asset('dist/assets/img/icon-vegetables-broccoli.png') }}"
-                                        alt="{{ $category }}" />
-                                    <h3 class="category-title">{{ $category }}</h3>
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- New Brand -->
     <section class="py-5 overflow-hidden">
         <div class="container-fluid">
@@ -47,7 +9,7 @@
                     <div class="flex-wrap mb-5 section-header d-flex justify-content-between">
                         <h2 class="section-title">Newly Arrived Brands</h2>
                         <div class="d-flex align-items-center">
-                            <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
+                            {{-- <a href="#" class="btn-link text-decoration-none">View All Categories →</a> --}}
                             <div class="swiper-buttons">
                                 <button class="swiper-prev brand-carousel-prev btn btn-yellow">
                                     ❮
@@ -109,7 +71,16 @@
                             <nav>
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                     <a href="#" class="nav-link text-uppercase fs-6 active" id="nav-all-tab"
-                                        data-bs-toggle="tab" data-bs-target="#nav-all">All</a>
+                                        data-bs-toggle="tab" data-bs-target="#nav-all" data-category="all">All</a>
+
+                                    @php
+                                        $uniqueCategories = $products->pluck('category')->unique();
+                                    @endphp
+                                    @foreach ($uniqueCategories as $category)
+                                        <a href="#" class="nav-link text-uppercase fs-6" id="nav-all-tab"
+                                            data-bs-toggle="tab" data-bs-target="#nav-all"
+                                            data-category="{{ $category }}">{{ $category }}</a>
+                                    @endforeach
                                 </div>
                             </nav>
                         </div>
@@ -119,7 +90,7 @@
                                 <div
                                     class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
                                     @foreach ($products as $product)
-                                        <div class="col">
+                                        <div class="col product-item" data-category="{{ $product->category }}">
                                             <div class="border-0 shadow-sm card h-100 product-card rounded-3">
                                                 <div class="position-relative">
                                                     <img src="{{ asset('dist/assets/img/buah/' . $product->image) }}"
@@ -127,7 +98,7 @@
                                                         style="height: 200px; object-fit: contain"
                                                         alt="{{ $product->name }}">
 
-                                                    @if ($product->quantity < 5)
+                                                    @if ($product->stock < 5)
                                                         <span
                                                             class="top-0 m-3 bg-danger badge rounded-pill text-dark position-absolute end-0">
                                                             <i class="fas fa-exclamation-triangle me-1"></i>Low Stock
@@ -390,6 +361,40 @@
                         .productId);
                     if (hiddenInput) {
                         hiddenInput.value = this.value;
+                    }
+                });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Ambil semua elemen kategori dari nav list
+            const categoryLinks = document.querySelectorAll(".nav-link");
+
+            // Ambil semua produk
+            const productItems = document.querySelectorAll(".product-item");
+
+            // Tambahkan event listener ke setiap kategori
+            categoryLinks.forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault(); // Mencegah reload halaman
+
+                    // Ambil kategori yang dipilih
+                    const selectedCategory = this.getAttribute("data-category");
+
+                    // Periksa apakah yang diklik adalah "All"
+                    if (selectedCategory === "all") {
+                        productItems.forEach(item => item.style.display = "block");
+                    } else {
+                        // Sembunyikan semua produk
+                        productItems.forEach(item => {
+                            if (item.getAttribute("data-category") === selectedCategory) {
+                                item.style.display =
+                                "block"; // Tampilkan produk yang sesuai
+                            } else {
+                                item.style.display =
+                                "none"; // Sembunyikan produk yang tidak sesuai
+                            }
+                        });
                     }
                 });
             });

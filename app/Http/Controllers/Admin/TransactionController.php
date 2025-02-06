@@ -34,4 +34,11 @@ class TransactionController extends Controller
             'allTransaction' => $allOrders
         ]);
     }
+
+    public function delete(Order $transaction)
+    {
+        $transaction->delete();
+
+        return redirect('admin/transaction');
+    }
 }

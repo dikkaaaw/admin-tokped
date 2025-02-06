@@ -43,10 +43,8 @@ Route::name('admin.')
         // User Routes
         Route::prefix('user')->group(function () {
             Route::get('/', 'UserController@index')->name('user.index');
-            Route::get('/{user}', 'UserController@read')->name('user.show');
             Route::post('/{user}', 'UserController@edit')->name('user.edit');
             Route::post('/proccessedit/{user}', 'UserController@proccessedit')->name('user.update');
-            Route::get('/delete/{user}', 'UserController@delete')->name('user.delete');
         });
 
         // Transaction Routes

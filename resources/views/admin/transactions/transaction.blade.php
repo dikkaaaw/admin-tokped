@@ -21,10 +21,10 @@
         <div class="card-body">
             <div class="mb-3 row">
                 <div class="col-md-6">
-                    <form method="GET">
+                    <form method="GET" action="{{ route('admin.transaction.search') }}">
                         <div class="input-group">
                             <input type="text" name="search" class="form-control" placeholder="Search transaction..."
-                                value="{{ Request()->search }}">
+                                value="{{ request()->query('search') }}">
                             <button class="btn btn-outline-secondary" type="submit">Search</button>
                         </div>
                     </form>

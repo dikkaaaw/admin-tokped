@@ -52,7 +52,7 @@
                 <tbody>
                     @foreach ($allOrders as $order)
                         <tr>
-                            <td>{{ 'ORDER ' . $order->id }}</td>
+                            <td>{{ 'ORDER' . $order->id }}</td>
                             <td>{{ $order->user->name }}</td>
                             <td>{{ $order->user->address }}</td>
                             <td>{{ $order->product->name }}</td>

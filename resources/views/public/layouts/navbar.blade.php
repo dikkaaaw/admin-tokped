@@ -43,6 +43,7 @@
                             $groupedOrders = $dataOrder->groupBy('product_name')->map(function ($group) {
                                 return [
                                     'price_per_item' => $group->first()->price_per_product,
+                                    'stock_per_item' => $group->first()->stock_per_product,
                                     'quantity' => $group->sum('quantity'),
                                     'total_price' => $group->sum('total_price'),
                                     'product_name' => $group->first()->product_name,
@@ -57,9 +58,19 @@
                                 data-order-id="{{ $order['id'] }}">
                             <li class="py-3 list-group-item border-bottom" data-order-id="{{ $order['id'] }}">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-3">
-                                            <h6 class="mb-1 fw-semibold">{{ $order['product_name'] }}</h6>
+                                    <div class="d-flex flex-row align-items-between">
+                                        <div class="me-3 flex-row">
+                                            <div class="d-flex flex-row gap-3">
+                                                <h6 class="mb-1 fw-semibold">{{ $order['product_name'] }}</h6>
+                                                @php
+                                                    $stockStyle = $order['stock_per_item'] <= 5 ? 'color: red;' : '';
+                                                @endphp
+                                                <p data-order-id="{{ $order['id'] }}"
+                                                    style="font-size: 13px; font-weight: bolder; margin-top: -5px; {{ $stockStyle }}"
+                                                    class="stock-input">
+                                                    {{ 'Stock: ' . $order['stock_per_item'] }}
+                                                </p>
+                                            </div>
                                             <div class="quantity-controls d-flex align-items-center">
                                                 <!-- Tombol minus -->
                                                 <button class="px-2 py-0 btn btn-sm btn-outline-secondary decrement-btn"
@@ -75,8 +86,20 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <span class="text-primary fw-semibold item-pricing"
-                                        data-order-id="{{ $order['id'] }}">{{ 'Rp. ' . number_format($order['price_per_item'] * $order['quantity'], 0, ',', '.') }}</span>
+                                    <div class="d-flex flex-column justify-content-end align-items-end row-gap-3">
+                                        <form method="POST" action="{{ route('cart.delete', $order['id']) }}"
+                                            id="delete-form-{{ $order['id'] }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" style="display: none;"></button>
+                                        </form>
+
+                                        <i class="fas fa-trash-alt" style="cursor: pointer; color: red;"
+                                            onclick="document.getElementById('delete-form-{{ $order['id'] }}').submit();"></i>
+
+                                        <span class="text-primary fw-semibold item-pricing"
+                                            data-order-id="{{ $order['id'] }}">{{ 'Rp. ' . number_format($order['price_per_item'] * $order['quantity'], 0, ',', '.') }}</span>
+                                    </div>
                                 </div>
                             </li>
                         @endforeach
@@ -92,13 +115,9 @@
 
                     <form action="{{ route('cart.update') }}" method="POST" id="update-cart-form">
                         @csrf
-                        <!-- Menambahkan input hidden untuk dataOrder -->
                         <input type="hidden" name="dataOrder" id="dataOrder"
                             value="{{ json_encode($groupedOrders) }}">
 
-                        <input type="hidden" name="removedItems" id="removedItems" value="[]">
-
-                        <!-- Form input tambahan, seperti note -->
                         <div class="mb-3">
                             <label for="orderNote" class="text-black form-label text-muted">Additional
                                 Instructions</label>
@@ -125,7 +144,8 @@
 </div>
 
 
-<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasSearch" aria-labelledby="Search">
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasSearch"
+    aria-labelledby="Search">
     <div class="ml-5 offcanvas-header">
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
@@ -162,20 +182,12 @@
             </div>
             <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
                 <div class="p-2 my-2 search-bar row bg-light rounded-4">
-                    {{-- <div class="col-md-4 d-none d-md-block">
-                        <select class="bg-transparent border-0 form-select">
-                            <option value="">All Categories</option>
-                            @foreach ($products->unique('category') as $product)
-                                <option value="{{ $product->category }}">{{ $product->category }}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
                     <div class="col-12 col-md-11 text-center">
                         <form action="{{ route('homepage.search') }}" method="POST" id="search-form"
                             class="text-center">
                             @csrf
                             <input type="text" class="bg-transparent border-0 form-control"
-                                placeholder="Search for more than 20,000 products" name="search_input" />
+                                placeholder="Search for more than 200 products" name="search_input" />
                         </form>
                     </div>
                     <div class="col-1">
@@ -281,21 +293,29 @@
                 const orderId = this.dataset.orderId;
                 const quantitySpan = document.querySelector(
                     `.quantity-input[data-order-id="${orderId}"]`);
+                const stockPerItemElement = document.querySelector(
+                    `.stock-input[data-order-id="${orderId}"]`
+                );
                 const pricePerItemElement = document.querySelector(
                     `.price-per-item[data-order-id="${orderId}"]`
                 );
                 let quantity = parseInt(quantitySpan.innerText);
-                quantity++;
-                quantitySpan.innerText = quantity; // Update tampilan kuantitas
+                let stockText = stockPerItemElement.innerText.replace('Stock: ', '').replace(
+                    /\./g, '');
+                let stock = parseInt(stockText);
 
-                let newQuantity = updateOrder(orderId, quantity);
+                if (quantity < stock) {
+                    quantity++;
+                    quantitySpan.innerText = quantity;
 
-                // Periksa apakah elemen price-per-item ada
-                if (pricePerItemElement) {
-                    const pricePerOrder = pricePerItemElement.value;
-                    updatePricing(orderId, pricePerOrder, newQuantity);
-                } else {
-                    console.error('Elemen price-per-item tidak ditemukan!');
+                    let newQuantity = updateOrder(orderId, quantity);
+
+                    if (pricePerItemElement) {
+                        const pricePerOrder = pricePerItemElement.value;
+                        updatePricing(orderId, pricePerOrder, newQuantity);
+                    } else {
+                        console.error('Elemen price-per-item tidak ditemukan!');
+                    }
                 }
             });
         });
@@ -306,7 +326,6 @@
                 const orderId = this.dataset.orderId;
                 const quantitySpan = document.querySelector(
                     `.quantity-input[data-order-id="${orderId}"]`);
-                // Periksa apakah elemen price-per-item ada
                 const pricePerItemElement = document.querySelector(
                     `.price-per-item[data-order-id="${orderId}"]`
                 );
@@ -323,19 +342,6 @@
                     } else {
                         console.error('Elemen price-per-item tidak ditemukan!');
                     }
-                } else if (quantity === 1) {
-                    quantity--;
-                    quantitySpan.innerText = quantity; // Update tampilan kuantitas menjadi 0
-
-                    let newQuantity = updateOrder(orderId, quantity);
-                    if (pricePerItemElement) {
-                        const pricePerOrder = pricePerItemElement.value;
-                        updatePricing(orderId, pricePerOrder, newQuantity);
-                    } else {
-                        console.error('Elemen price-per-item tidak ditemukan!');
-                    }
-                    // Menghapus item jika kuantitas mencapai 0
-                    document.querySelector(`li[data-order-id="${orderId}"]`).remove();
                 }
             });
         });
@@ -360,11 +366,7 @@
 
             // Menambahkan serialized dataOrder ke dalam form
             document.getElementById('dataOrder').value = JSON.stringify(dataOrder);
-
-            // Menambahkan array removedItems ke dalam form
-            document.getElementById('removedItems').value = JSON.stringify(removedItems);
             return quantity;
-
         }
 
         function gatherPrices() {

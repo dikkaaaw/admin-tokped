@@ -54,6 +54,7 @@
                         class="mt-2" width="100">
                 </div>
                 <button type="submit" class="btn btn-primary">Update Product</button>
+                <a href="{{ URL('admin/product') }}" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
     </div>

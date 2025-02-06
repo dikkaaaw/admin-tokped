@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('login', 'App\Http\Controllers\AuthController@login_page')->name('login_page');
 Route::post('logout', 'App\Http\Controllers\AuthController@logout')->name('logout');
 Route::post('login', 'App\Http\Controllers\AuthController@login')->name('login');
+
+// Update Address
 Route::post('update-address', 'App\Http\Controllers\AuthController@updateAddress')->name('updateAddress');
 
 // Register

@@ -60,7 +60,10 @@ Route::name('admin.')
         // Homepage Routes
     });
 
+// Homepage
 Route::get('/', 'App\Http\Controllers\PageController@index')->name('homepage');
+Route::post('/search-product', 'App\Http\Controllers\PageController@searchProduct')->name('homepage.search');
+// Cart
 Route::post('/cart/store', 'App\Http\Controllers\PageController@storeToCart')->name('cart.store');
 Route::post('/cart/update', 'App\Http\Controllers\PageController@update')->name('cart.update');
-Route::post('/search-product', 'App\Http\Controllers\PageController@searchProduct')->name('homepage.search');
+Route::delete('/cart/delete/{idOrder}', 'App\Http\Controllers\PageController@destroy')->name('cart.delete');

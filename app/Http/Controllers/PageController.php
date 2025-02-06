@@ -132,6 +132,7 @@ class PageController extends Controller
             // Menghitung harga per produk dan total harga per order
             $pricePerProduct = $product ? (int)$product->price : 0;
             $totalPricePerOrder = $product ? (int)$pricePerProduct * (int)$order->quantity : 0;
+            $order->stock_per_product = $product->stock;
 
             // Menambahkan harga per produk dan total harga per order
             $order->price_per_product = $pricePerProduct;
@@ -148,7 +149,7 @@ class PageController extends Controller
         return collect([
             'dataOrder' => $dataOrder,
             'totalPrice' => $totalPrice,
-            'totalQuantity' => $dataOrder->count(), // Menggunakan count() pada koleksi
+            'totalQuantity' => $dataOrder->count(),
             'message' => null
         ]);
     }
@@ -158,7 +159,6 @@ class PageController extends Controller
     {
         // Mendapatkan dataOrder yang dikirimkan dari form sebagai JSON
         $newDataOrder = json_decode($request->input('dataOrder'), true);  // Mengubah JSON menjadi array
-        $removedItems = json_decode($request->input('removedItems'), true); // Mendapatkan removedItems
 
         if (!$newDataOrder) {
             return redirect()->route('homepage')->withErrors('No changes in cart.'); // Menangani jika dataOrder kosong
@@ -205,32 +205,24 @@ class PageController extends Controller
             }
         }
 
-        // Hapus produk yang ada di removedItems
-        foreach ($removedItems as $removedItemId) {
-            $removedOrder = Order::where('id', $removedItemId)->first();
-            if ($removedOrder) {
-                $removedOrder->delete();
-            }
-        }
-
         // Kembalikan respons yang sesuai
         return redirect()->route('homepage')->with('status', 'Cart updated successfully');
     }
 
 
     // DELETE: Menghapus produk berdasarkan ID
-    public function destroy($id)
+    public function destroy($idOrder)
     {
-        $product = Product::find($id); // Mencari produk berdasarkan ID
+        $order = Order::find($idOrder); // Mencari produk berdasarkan ID
 
         // Jika produk tidak ditemukan, kembalikan error
-        if (!$product) {
+        if (!$order) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        $product->delete(); // Menghapus produk
+        $order->delete(); // Menghapus produk
 
-        return response()->json(['message' => 'Product deleted successfully']); // Menyatakan penghapusan berhasil
+        return redirect()->route('homepage');
     }
 
     public function searchProduct(Request $request)

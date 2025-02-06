@@ -33,8 +33,6 @@ Route::name('admin.')
         // Order Routes
         Route::prefix('order')->group(function () {
             Route::get('/', 'OrderController@index')->name('order.index');
-            Route::get('/add', 'OrderController@add')->name('order.add');
-            Route::post('/add', 'OrderController@proccessadd')->name('order.store');
             Route::get('/{order}', 'OrderController@edit')->name('order.edit');
             Route::post('/proccessedit/{order}', 'OrderController@proccessedit')->name('order.update');
             Route::get('/delete/{order}', 'OrderController@delete')->name('order.delete');
@@ -50,12 +48,8 @@ Route::name('admin.')
         // Transaction Routes
         Route::prefix('transaction')->group(function () {
             Route::get('/', 'TransactionController@index')->name('transaction.index');
-            Route::get('/{transaction}', 'TransactionController@read')->name('transaction.show');
-            Route::post('/{transaction}/status', 'TransactionController@updateStatus')->name('transaction.status');
-            Route::post('/{transaction}', 'TransactionController@proccessedit')->name('transaction.update');
+            Route::get('/delete/{transaction}', 'TransactionController@delete')->name('transaction.delete');
         });
-
-        // Homepage Routes
     });
 
 // Homepage

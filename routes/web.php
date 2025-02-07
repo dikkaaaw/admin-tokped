@@ -62,3 +62,6 @@ Route::post('/search-product', 'App\Http\Controllers\PageController@searchProduc
 Route::post('/cart/store', 'App\Http\Controllers\PageController@storeToCart')->name('cart.store');
 Route::post('/cart/update', 'App\Http\Controllers\PageController@update')->name('cart.update');
 Route::delete('/cart/delete/{idOrder}', 'App\Http\Controllers\PageController@destroy')->name('cart.delete');
+
+// Payment
+Route::get('/payment', 'App\Http\Controllers\PageController@paymentView')->name('homepage.payment');

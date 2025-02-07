@@ -206,7 +206,7 @@ class PageController extends Controller
         }
 
         // Kembalikan respons yang sesuai
-        return redirect()->route('homepage')->with('status', 'Cart updated successfully');
+        return redirect()->route('homepage.payment')->with('status', 'Cart updated successfully');
     }
 
 
@@ -252,5 +252,10 @@ class PageController extends Controller
             'totalQuantity' => $this->cartData['totalQuantity'],
             'message' => $this->cartData['message'] ?? null
         ]);
+    }
+
+    public function paymentView()
+    {
+        return view('public.payment');
     }
 }

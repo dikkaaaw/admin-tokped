@@ -28,8 +28,9 @@
         <table class="w-full border-collapse border border-gray-300 shadow-lg">
             <thead>
                 <tr class="bg-yellow-600 text-white">
-                    <th class="border border-gray-300 px-4 py-3 text-center">Nama Bank</th>
-                    <th class="border border-gray-300 px-4 py-3 text-center">Nomor Rekening</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center">Bank Name</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center">On Behalf Of</th>
+                    <th class="border border-gray-300 px-4 py-3 text-center">Account Number</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,7 +42,8 @@
                             <p class="font-semibold text-gray-700">BCA</p>
                         </div>
                     </td>
-                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">028490234</td>
+                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">RADEN AHRAM KURNIAWAN</td>
+                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">0373933861</td>
                 </tr>
                 <tr class="bg-white hover:bg-yellow-100 transition">
                     <td class="border border-gray-300 px-7 py-2 align-middle">
@@ -51,7 +53,8 @@
                             <p class="font-semibold text-gray-700">BRI</p>
                         </div>
                     </td>
-                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">028490234</td>
+                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">I GUSTI NGURAH BAYU S</td>
+                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">8461201015550530</td>
                 </tr>
                 <tr class="bg-white hover:bg-yellow-100 transition">
                     <td class="border border-gray-300 px-7 py-2 align-middle">
@@ -61,7 +64,8 @@
                             <p class="font-semibold text-gray-700">DANA</p>
                         </div>
                     </td>
-                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">08490234938</td>
+                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">I gusti ngurah bayu supartha</td>
+                    <td class="border border-gray-300 px-4 py-2 text-gray-700 text-center">085858641518</td>
                 </tr>
             </tbody>
         </table>
